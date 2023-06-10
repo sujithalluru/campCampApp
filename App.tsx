@@ -1,118 +1,87 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './LoginScreen';
+import MainScreen from './MainScreen';
+import MainAdminScreen from './MainAdminScreen';
+import { Image, View, StyleSheet, Platform, Text} from 'react-native';
+import firebase from "@react-native-firebase/app";
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// ...
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const Stack = createStackNavigator();
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+// const config = {
+//   clientId: '580880783847-4593v45hoq45rcfh6eusst0uaibum5l5.apps.googleusercontent.com',
+//   appId: '1:580880783847:ios:77f195868081495d818542',
+//   apiKey: 'AIzaSyBAWYqugVCaoPa0SZu5r20PDfllQCmw1H8',
+//   databaseURL: '',
+//   storageBucket: 'campapp-388922.appspot.com',
+//   messagingSenderId: '580880783847',
+//   projectId: 'campapp-388922',
+// };
+// try {
+//   firebase.initializeApp(config);
+// } catch (error) {
+//   console.log("error w firebase")
+// }
+
+
+const App = () => {
+  
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        <Stack.Screen name="Login">
+          {(props) => <LoginScreen {...props} />}
+        </Stack.Screen>
+        <Stack.Screen 
+  name="Main" 
+  component={MainScreen} 
+  options={{
+    headerTitle: () => (
+      <View style={{ alignItems: 'center', flexDirection: 'row'}}>
+        <Text style={[styles.title]}>Camp CAMP</Text>
+        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5,}} />
+      </View>
+    ),
+    headerStyle: {
+      backgroundColor: '#086c9c',
+      height: 130,
+    },
+  }} 
+/>
+<Stack.Screen 
+  name="MainAdmin" 
+  component={MainAdminScreen} 
+  options={{
+    headerTitle: () => (
+      <View style={{ alignItems: 'center', flexDirection: 'row'}}>
+        <Text style={[styles.title]}>Camp CAMP</Text>
+        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5,}} />
+      </View>
+    ),
+    headerStyle: {
+      backgroundColor: '#086c9c',
+      height: 130,
+    },
+  }} 
+/>
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
+};
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+title: {
+  fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
+  fontWeight: '700',
+  fontSize: 40,
+  marginRight: 15,
+  marginLeft: 50,
+  marginBottom: 10,
+  color: '#ffffff',
+  }
 });
 
 export default App;

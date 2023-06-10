@@ -42,7 +42,8 @@ target 'campCampApp' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
+  $RNFirebaseAnalyticsWithoutAdIdSupport=true
+  
   target 'campCampAppTests' do
     inherit! :complete
     # Pods for testing
