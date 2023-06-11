@@ -5,7 +5,7 @@ import LoginScreen from './LoginScreen';
 import MainScreen from './MainScreen';
 import MainAdminScreen from './MainAdminScreen';
 import { Image, View, StyleSheet, Platform, Text} from 'react-native';
-import firebase from "@react-native-firebase/app";
+import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 
 // ...
@@ -43,7 +43,15 @@ const App = () => {
     }
 
     requestUserPermission();
-    messaging().subscribeToTopic('Session_1');
+    messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+  });
+
+  // When a message arrives while the app is in the background or quit
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background!', JSON.stringify(remoteMessage));
+  });
+    messaging().subscribeToTopic('all');
   }, []);
   return (
     <NavigationContainer>

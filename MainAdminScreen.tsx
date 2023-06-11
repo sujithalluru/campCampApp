@@ -30,12 +30,12 @@ const icons = {
       // navigation.setOptions({
       //   headerRight: () => <SettingsDropdown handleLogout={handleLogout} />,
       // });
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
       });
-      const unsubscribe = NetInfo.addEventListener(state => {
+      const unsubscribe = NetInfo.addEventListener((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
@@ -69,12 +69,12 @@ const icons = {
       // navigation.setOptions({
       //   headerRight: () => <SettingsDropdown handleLogout={handleLogout} />,
       // });
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
       });
-      const unsubscribe = NetInfo.addEventListener(state => {
+      const unsubscribe = NetInfo.addEventListener((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
@@ -120,12 +120,12 @@ const icons = {
       // navigation.setOptions({
       //   headerRight: () => <SettingsDropdown handleLogout={handleLogout} />,
       // });
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
       });
-      const unsubscribe = NetInfo.addEventListener(state => {
+      const unsubscribe = NetInfo.addEventListener((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }

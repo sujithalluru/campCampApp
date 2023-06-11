@@ -17,12 +17,12 @@ const HomeAdminScreen = () => {
     const [isConnected, setIsConnected] = useState(false);
   
     useEffect(() => {
-      NetInfo.fetch().then(state => {
+      NetInfo.fetch().then((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
       });
-      const unsubscribe = NetInfo.addEventListener(state => {
+      const unsubscribe = NetInfo.addEventListener((state: { isConnected: boolean | ((prevState: boolean) => boolean) | null; }) => {
         if (state.isConnected !== null) {
           setIsConnected(state.isConnected);
         }
