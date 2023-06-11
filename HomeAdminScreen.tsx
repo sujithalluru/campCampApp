@@ -38,9 +38,10 @@ const HomeAdminScreen = () => {
       //   id: 12345,
       //   description: 'notification_sent',
       // });
-      await analytics().logEvent('product_view', {
-        id: '1234',
-      });
+      // await analytics().logEvent('product_view', {
+      //   id: '1234',
+      // });
+      console.log("Sending Notification...");
     }
     // const user = firebase.auth().currentUser;
 

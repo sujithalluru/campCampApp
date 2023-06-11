@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen';
@@ -6,8 +6,10 @@ import MainScreen from './MainScreen';
 import MainAdminScreen from './MainAdminScreen';
 import { Image, View, StyleSheet, Platform, Text} from 'react-native';
 import firebase from "@react-native-firebase/app";
+import messaging from '@react-native-firebase/messaging';
 
 // ...
+// require('dotenv').config();
 
 const Stack = createStackNavigator();
 
@@ -28,7 +30,21 @@ const Stack = createStackNavigator();
 
 
 const App = () => {
-  
+  useEffect(() => {
+    const requestUserPermission = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+      }
+    }
+
+    requestUserPermission();
+    messaging().subscribeToTopic('Session_1');
+  }, []);
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
