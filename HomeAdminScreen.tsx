@@ -9,6 +9,8 @@ import Settings from './Settings';
 import Feedback from './Feedback';
 import { Image } from 'react-native-elements';
 import analytics from '@react-native-firebase/analytics';
+import firestore from '@react-native-firebase/firestore';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -33,15 +35,23 @@ const HomeAdminScreen = () => {
     }, [navigation]);
     
     const handleSendNotification = async () => {
-      // Add your logic for sending notification here
-      // analytics().logEvent('Notification_Sent', {
-      //   id: 12345,
-      //   description: 'notification_sent',
-      // });
-      // await analytics().logEvent('product_view', {
-      //   id: '1234',
-      // });
       console.log("Sending Notification...");
+      const title = "Your notification title";
+      const body = "Your notification body";
+
+      // Add a new document to the "notifications" collection
+      firestore()
+        .collection('notifications')
+        .add({
+          title: title,
+          body: body
+        })
+        .then(() => {
+          console.log('Notification sent successfully');
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     }
     // const user = firebase.auth().currentUser;
 
