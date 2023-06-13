@@ -7,6 +7,8 @@ import MainAdminScreen from './MainAdminScreen';
 import { Image, View, StyleSheet, Platform, Text} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+import notifee from '@notifee/react-native';
+
 
 // ...
 // require('dotenv').config();
@@ -45,14 +47,33 @@ const App = () => {
     requestUserPermission();
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      
+      // Display notification with notifee
+      // await notifee.displayNotification({
+      //   title: remoteMessage.notification.title,
+      //   body: remoteMessage.notification.body,
+      //   android: {
+      //     channelId: 'your-channel-id', // make sure you create this channel in your app
+      //   },
+      // });
   });
 
   // When a message arrives while the app is in the background or quit
   messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', JSON.stringify(remoteMessage));
+      
+      // Display notification with notifee
+      // await notifee.displayNotification({
+      //   title: remoteMessage.notification.title,
+      //   body: remoteMessage.notification.body,
+      //   android: {
+      //     channelId: 'your-channel-id', // make sure you create this channel in your app
+      //   },
+      // });
   });
     messaging().subscribeToTopic('all');
   }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
