@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -85,8 +85,11 @@ const icons = {
     return (
       <>
         {isConnected ? (
-          <View >
+          <ScrollView >
           {/* <ScrollView> */}
+          <Text style={styles.work}>
+            Admin Dashboard
+          </Text>
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
@@ -100,7 +103,7 @@ const icons = {
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           {/* </ScrollView> */}
-        </View>
+        </ScrollView>
         ) : (
           <View >
             <Icon name="wifi" size={32} color="#888" />

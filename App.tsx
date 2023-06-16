@@ -84,32 +84,14 @@ const App = () => {
   name="Main" 
   component={MainScreen} 
   options={{
-    headerTitle: () => (
-      <View style={{ alignItems: 'center', flexDirection: 'row'}}>
-        <Text style={[styles.title]}>Camp CAMP</Text>
-        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5,}} />
-      </View>
-    ),
-    headerStyle: {
-      backgroundColor: '#086c9c',
-      height: 130,
-    },
+    headerShown: false
   }} 
 />
 <Stack.Screen 
   name="MainAdmin" 
   component={MainAdminScreen} 
   options={{
-    headerTitle: () => (
-      <View style={{ alignItems: 'center', flexDirection: 'row'}}>
-        <Text style={[styles.title]}>Camp CAMP</Text>
-        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5,}} />
-      </View>
-    ),
-    headerStyle: {
-      backgroundColor: '#086c9c',
-      height: 130,
-    },
+    headerShown: false
   }} 
 />
 

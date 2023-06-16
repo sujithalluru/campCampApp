@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Button } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
+
 import Icon from "react-native-vector-icons/FontAwesome";
 import NetInfo from '@react-native-community/netinfo';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -12,8 +14,14 @@ import analytics from '@react-native-firebase/analytics';
 import firestore from '@react-native-firebase/firestore';
 
 
+type RootStackParamList = {
+  HomeScreen: undefined;
+  NotifSendScreen: undefined;
+};
 
-const Tab = createBottomTabNavigator();
+type Props = {
+  navigation: NavigationProp<RootStackParamList, 'HomeScreen'>;
+}
 const HomeAdminScreen = () => {
     const navigation = useNavigation();
     const [isConnected, setIsConnected] = useState(false);
@@ -35,34 +43,41 @@ const HomeAdminScreen = () => {
     }, [navigation]);
     
     const handleSendNotification = async () => {
-      console.log("Sending Notification...");
-      const title = "Your notification title";
-      const body = "Your notification body";
-
+      
+      // console.log("Sending Notification...");
+      // const title = "Your notification title";
+      // const body = "Your notification body";
+      navigation.dispatch(
+        CommonActions.navigate({
+          name: "NotifSendScreen",
+        }
+        )
+        
+      );
       // Add a new document to the "notifications" collection
-      firestore()
-        .collection('notifications')
-        .add({
-          title: title,
-          body: body
-        })
-        .then(() => {
-          console.log('Notification sent successfully');
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
+      // firestore()
+      //   .collection('notifications')
+      //   .add({
+      //     title: title,
+      //     body: body
+      //   })
+      //   .then(() => {
+      //     console.log('Notification sent successfully');
+      //   })
+      //   .catch((error) => {
+      //     console.error('Error:', error);
+      //   });
     }
     // const user = firebase.auth().currentUser;
 
     return (
         <>
           {isConnected ? (
+            <ScrollView>
             <View style={{alignItems: 'center'}}>
               <Text style={styles.work}>
                 Admin Dashboard
               </Text>
-              {/* <Text>Welcome {user ? user.email : "no user"}</Text> */}
               <TouchableOpacity style={styles.button} onPress={handleSendNotification}>
                 <Text style={styles.buttonText}>Send Notification</Text>
               </TouchableOpacity>
@@ -80,6 +95,7 @@ const HomeAdminScreen = () => {
                 <Image source={require('./assets/theme_days.jpeg')} style={{width: 350, height: 35}} />
               </TouchableOpacity>
             </View>
+            </ScrollView>
           ) : (
             <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
               <Icon name="wifi" size={32} color="#888" />
@@ -93,34 +109,44 @@ const HomeAdminScreen = () => {
 
   export default HomeAdminScreen;
   const styles = StyleSheet.create({
-    work:{
-      fontSize: 24,
-      alignSelf: "center",
-      marginVertical: 8,
-      marginBottom: 4,
-    },
-    qrContainer: {
-        backgroundColor: 'white',
-        margin: 20,
-        marginTop: 0,
-        borderWidth: 2,
-        borderColor: '#ebe8e8',
-        borderRadius: 15,
-        overflow: 'hidden',
-        alignSelf: 'center',
-        padding: 20, 
-    },
     button: {
-        width: '90%',
-        height: 90,
-        backgroundColor: '#841584',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        marginVertical: 5,
+      alignItems: 'center',
+      backgroundColor: '#841584',
+      borderRadius: 15,
+      justifyContent: 'center',
+      marginVertical: '3%',
+      padding: '4%',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+      width: '90%',
     },
     buttonText: {
-        color: 'white',
-        fontSize: 40,
-    }
+      color: 'white',
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    qrContainer: {
+      alignSelf: 'center',
+      backgroundColor: 'white',
+      borderColor: '#ebe8e8',
+      borderWidth: 1,
+      borderRadius: 15,
+      margin: '2%',
+      overflow: 'hidden',
+      padding: '2%', 
+    },
+    work: {
+      alignSelf: "center",
+      fontSize: 24,
+      marginVertical: '2%',
+      fontWeight: '500',
+    },
   });
+  
+  
