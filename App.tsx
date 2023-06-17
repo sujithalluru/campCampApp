@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LoginScreen from './LoginScreen';
+import LoginScreen from './LoginScreen1';
 import MainScreen from './MainScreen';
 import MainAdminScreen from './MainAdminScreen';
 import { Image, View, StyleSheet, Platform, Text} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import notifee from '@notifee/react-native';
-
-
+import SignupScreen from './SignUpScreen';
+import QuickLinks from './QuickLinks';
+import SummerNewsletter from './SummerNewsletter';
+import Handbook from './Handbook';
 // ...
 // require('dotenv').config();
 
@@ -76,25 +78,59 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="Login">
-          {(props) => <LoginScreen {...props} />}
-        </Stack.Screen>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{
+    headerTitle: () => (
+      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+        <Text style={[styles.title]}>Camp CAMP</Text>
+        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5, }} />
+      </View>
+    ),
+    headerStyle: {
+      backgroundColor: '#086c9c',
+      height: 130,
+    },
+  }}>
+        <Stack.Screen name="Login" component={LoginScreen} options={{
+            headerShown: true
+          }} />
+        <Stack.Screen name="Signup" component={SignupScreen} options={{
+            headerShown: true
+          }} />
         <Stack.Screen 
-  name="Main" 
-  component={MainScreen} 
-  options={{
-    headerShown: false
-  }} 
-/>
-<Stack.Screen 
-  name="MainAdmin" 
-  component={MainAdminScreen} 
-  options={{
-    headerShown: false
-  }} 
-/>
-
+          name="Main" 
+          component={MainScreen} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="MainAdmin" 
+          component={MainAdminScreen} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="QuickLinks" 
+          component={QuickLinks} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="SummerNewsletter" 
+          component={SummerNewsletter} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="Handbook" 
+          component={Handbook} 
+          options={{
+            headerShown: true
+          }} 
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

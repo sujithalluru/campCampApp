@@ -53,7 +53,7 @@ const icons = {
       <>
         {isConnected ? (
           <View >
-            <Settings/>
+            <Settings navigation={navigation}/>
         </View>
         ) : (
           <View >
@@ -94,7 +94,7 @@ const icons = {
           
           <ScrollView>
             <Text style={styles.work}>
-                Admin Dashboard
+                Sent Notification History
               </Text>
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />

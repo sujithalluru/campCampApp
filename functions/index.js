@@ -36,4 +36,27 @@ exports.sendNotificationOnWrite = functions.firestore
                 logger.error('Error sending message:', error);
             });
     });
+exports.sendGratitudeOnWrite = functions.firestore
+    .document('gratitudeMessage/{gratitudeMessageId}')
+    .onCreate((snap, context) => {
+        const gratitude = snap.data();
+
+        const message = {
+            notification: {
+                title: gratitudeMessage.title,  // getting title from the document
+                body: gratitudeMessage.body,  // getting body from the document
+            },
+            topic: 'all',
+        };
+
+        // Send a message to devices subscribed to the provided topic.
+        return admin.messaging().send(message)
+            .then((response) => {
+                // Response is a message ID string.
+                logger.info('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                logger.error('Error sending message:', error);
+            });
+    });
 

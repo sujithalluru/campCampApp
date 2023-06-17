@@ -9,6 +9,7 @@ import CalendarEvent from './ToDo';
 import Settings from './Settings';
 import Feedback from './Feedback';
 import HomeScreen from './HomeScreen';
+
 const Tab = createBottomTabNavigator();
 
 const icons = {
@@ -47,7 +48,7 @@ const icons = {
       <>
         {isConnected ? (
           <View >
-            <Settings/>
+            <Settings navigation={navigation}/>
         </View>
         ) : (
           <View >
@@ -88,7 +89,7 @@ const icons = {
           <ScrollView >
           {/* <ScrollView> */}
           <Text style={styles.work}>
-            Admin Dashboard
+            Previous Notifications
           </Text>
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
           <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
