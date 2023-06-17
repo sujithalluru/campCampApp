@@ -39,12 +39,12 @@ exports.sendNotificationOnWrite = functions.firestore
 exports.sendGratitudeOnWrite = functions.firestore
     .document('gratitudeMessage/{gratitudeMessageId}')
     .onCreate((snap, context) => {
-        const gratitude = snap.data();
+        const notification  = snap.data();
 
         const message = {
             notification: {
-                title: gratitudeMessage.title,  // getting title from the document
-                body: gratitudeMessage.body,  // getting body from the document
+                title: notification.title,  // getting title from the document
+                body: notification.body,  // getting body from the document
             },
             topic: 'all',
         };
