@@ -1,17 +1,20 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const logger = require('firebase-functions/logger');
+const nodemailer = require('nodemailer');
 
 admin.initializeApp();
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: 'sujith.alluru1108@gmail.com',
+        clientId: '580880783847-57v1bstle9k77nbsacaouvg8ijqlm7tq.apps.googleusercontent.com',
+        clientSecret: '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',
+        refreshToken: '1//04VjnmDILjO3bCgYIARAAGAQSNwF-L9Irq10dAp_eXqh9JLMYOXSi6j8cSsjf70wNPLabmaL3-W8JLBqvjeJ5v5NwSTOATxvYnJY',
+    },
+});
 
 exports.sendNotificationOnWrite = functions.firestore
     .document('notifications/{notificationId}')
@@ -60,3 +63,41 @@ exports.sendGratitudeOnWrite = functions.firestore
             });
     });
 
+exports.sendCodes = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
+  let volunteerCode = Math.floor(100000 + Math.random() * 900000); // generate 6-digit code
+  let adminCode = Math.floor(100000 + Math.random() * 900000); // generate 6-digit code
+
+  // Send email
+  let info = await transporter.sendMail({
+    from: '"Your App" <sujith.alluru1108@gmail.com>',
+    to: "sujith.alluru1108@gmail.com",
+    subject: "Weekly Codes",
+    text: `Volunteer code: ${volunteerCode}\nAdmin code: ${adminCode}`,
+    html: `<b>Volunteer code: ${volunteerCode}</b><br/><b>Admin code: ${adminCode}</b>`
+  });
+
+  // Save codes to database
+  let db = admin.firestore();
+  let docRef = db.collection('codes').doc('current');
+  return docRef.set({
+    volunteer: volunteerCode,
+    admin: adminCode
+  });
+});
+
+exports.validateCode = functions.https.onCall(async (data, context) => {
+  let db = admin.firestore();
+  let docRef = db.collection('codes').doc('current');
+  let doc = await docRef.get();
+
+  if (!doc.exists) {
+    throw new functions.https.HttpsError('not-found', 'No current codes');
+  }
+
+  let codes = doc.data();
+  if (codes[data.role] !== data.code) {
+    throw new functions.https.HttpsError('invalid-argument', 'Invalid code');
+  }
+
+  return { valid: true };
+});

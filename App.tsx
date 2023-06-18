@@ -12,6 +12,7 @@ import SignupScreen from './SignUpScreen';
 import QuickLinks from './QuickLinks';
 import SummerNewsletter from './SummerNewsletter';
 import Handbook from './Handbook';
+import CheckInScreen from './CheckInScreen';
 // ...
 // require('dotenv').config();
 
@@ -127,6 +128,13 @@ const App = () => {
         <Stack.Screen 
           name="Handbook" 
           component={Handbook} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="CheckInScreen" 
+          component={CheckInScreen} 
           options={{
             headerShown: true
           }} 

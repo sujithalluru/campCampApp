@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* campCampAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* campCampAppTests.m */; };
 		0C80B921A6F3F58F76C31292 /* libPods-campCampApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-campCampApp.a */; };
-		10EB3E6A2A33C18400FF6D8E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10EB3E692A33C18400FF6D8E /* GoogleService-Info.plist */; };
+		10D22EB42A3FA402008640C1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10D22EB32A3FA402008640C1 /* GoogleService-Info.plist */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -31,8 +31,8 @@
 		00E356EE1AD99517003FC87E /* campCampAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = campCampAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* campCampAppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = campCampAppTests.m; sourceTree = "<group>"; };
+		10D22EB32A3FA402008640C1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		10EB3E622A33AAEA00FF6D8E /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
-		10EB3E692A33C18400FF6D8E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		10EB3E6B2A3540CA00FF6D8E /* campCampApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = campCampApp.entitlements; path = campCampApp/campCampApp.entitlements; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* campCampApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = campCampApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = campCampApp/AppDelegate.h; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				10EB3E692A33C18400FF6D8E /* GoogleService-Info.plist */,
+				10D22EB32A3FA402008640C1 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* campCampApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* campCampAppTests */,
@@ -260,7 +260,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				10EB3E6A2A33C18400FF6D8E /* GoogleService-Info.plist in Resources */,
+				10D22EB42A3FA402008640C1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

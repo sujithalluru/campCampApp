@@ -7,12 +7,13 @@ import { NavigationProp, CommonActions } from '@react-navigation/native';
 import firestore from "@react-native-firebase/firestore";
 
 const options = [
-  { id: '1', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
-  { id: '2', title: 'Summer Newsletter', description: 'CAMP Chronicles!🤩', iconName: 'newspaper-o', route: 'SummerNewsletter'},
-  { id: '3', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
-  { id: '4', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '5', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
-  { id: '6', title: 'Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
+  { id: '1', title: 'Check In', description: 'Sign in when you arrive!⛺️', iconName: 'flag', route: 'CheckInScreen' },
+  { id: '2', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
+  { id: '3', title: 'Summer Newsletter', description: 'CAMP Chronicles!🤩', iconName: 'newspaper-o', route: 'SummerNewsletter'},
+  { id: '4', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
+  { id: '5', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
+  { id: '6', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
+  { id: '7', title: 'Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
   { id: '8', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
 ];
 
@@ -25,6 +26,7 @@ type RootStackParamList = {
   CompleteCAMPSurvey: undefined;
   QuickLinks: undefined
   Handbook: undefined;
+  CheckInScreen: undefined;
   Details: { id: number };
 };
 
@@ -92,10 +94,10 @@ const HomeScreen = () => {
       );
       
     } 
-    else if(option.title == "Contact Teachers"){
+    else if(option.title == "Check In"){
       navigation.dispatch(
         CommonActions.navigate({
-          name: "ContactTeachers",
+          name: "CheckInScreen",
         }
         )
         
