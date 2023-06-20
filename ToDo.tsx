@@ -4,11 +4,10 @@ import { View, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 interface Props {
   id: React.Key,
   summary: string,
-  start: string,
-  end: string,
+  description: string,
 }
 
-const CalendarEvent = ({ id, summary, start, end }: Props) => {
+const CalendarEvent = ({ id, summary, description }: Props) => {
     return (
       <View key={id} style={styles.container}>
         <View style={styles.blueStripWrapper}>
@@ -17,8 +16,7 @@ const CalendarEvent = ({ id, summary, start, end }: Props) => {
         <View style={styles.content}>
           <Text style={styles.title}>{summary}</Text>
           <Text style={styles.time}>
-            {new Date(start).toLocaleTimeString()} -{' '}
-            {new Date(end).toLocaleTimeString()}
+            {description}
           </Text>
         </View>
       </View>

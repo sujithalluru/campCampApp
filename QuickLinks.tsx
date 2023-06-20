@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { ScrollView, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { ScrollView, View, TouchableOpacity, Text, StyleSheet, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 
@@ -70,15 +69,23 @@ style={{ marginLeft: 16 }}
 
 
 return (
-<View style={styles.container}>
-<SearchBar
-placeholder="Search Link"
-onChangeText={setSearch}
-value={search}
-containerStyle={styles.searchContainer}
-inputContainerStyle={styles.searchInputContainer}
-inputStyle={styles.searchInput}
-/>
+    <View style={styles.container}>
+     <View style={styles.searchContainer}>
+        <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search Link"
+          placeholderTextColor="#888"
+          onChangeText={setSearch}
+          value={search}
+        />
+        {search !== '' && (
+          <TouchableOpacity style={styles.clearIconContainer} onPress={() => setSearch('')}>
+            <Icon name="times-circle" size={20} color="#888" style={styles.clearIcon} />
+          </TouchableOpacity>
+        )}
+      </View>
+
 <ScrollView contentContainerStyle={styles.linksContainer}>
 {filteredLinksData.map((item, index) => (
 <QuickLink key={index} title={item.title} link={item.link} description={item.description} />
@@ -94,20 +101,7 @@ container: {
 flex: 1,
 backgroundColor: '#fff',
 },
-searchContainer: {
-backgroundColor: '#fff',
-borderBottomColor: 'transparent',
-borderTopColor: 'transparent',
-paddingHorizontal:17,
-paddingTop: 15,
-},
-searchInputContainer: {
-backgroundColor: '#f0f0f0',
-borderRadius: 10,
-},
-searchInput: {
-color: '#000',
-},
+
 linksContainer: {
 flexDirection: 'row',
 flexWrap: 'wrap',
@@ -139,6 +133,35 @@ fontSize: 11.5,
 justifyContent:'center',
 textAlign: 'center',
 },
+searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    paddingHorizontal: 17,
+    height: 50,
+    margin: 10,
+    marginBottom: 5,
+  },
+  
+  searchIcon: {
+    marginRight: 10,
+  },
+  
+  searchInput: {
+    flex: 1,
+    color: '#000',
+    fontSize: 16,
+    paddingVertical: 10,
+  },
+  
+  clearIconContainer: {
+    marginLeft: 10,
+  },
+  
+  clearIcon: {
+    padding: 5,
+  },
 });
 
 

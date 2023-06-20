@@ -7,14 +7,15 @@ import { NavigationProp, CommonActions } from '@react-navigation/native';
 import firestore from "@react-native-firebase/firestore";
 
 const options = [
-  { id: '1', title: 'Check In', description: 'Sign in when you arrive!⛺️', iconName: 'flag', route: 'CheckInScreen' },
-  { id: '2', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
-  { id: '3', title: 'Summer Newsletter', description: 'CAMP Chronicles!🤩', iconName: 'newspaper-o', route: 'SummerNewsletter'},
-  { id: '4', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
-  { id: '5', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '6', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
-  { id: '7', title: 'Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
-  { id: '8', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
+  { id: '1', title: 'Send Notification', description: 'Message volunteers with a push notification!📣', iconName: 'send-o', route: 'NotificationFormScreen' },
+  { id: '2', title: 'Check In', description: 'Sign in when you arrive!⛺️', iconName: 'flag', route: 'CheckInScreen' },
+  { id: '3', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
+  // { id: '4', title: 'Summer Newsletter', description: 'CAMP Chronicles!🤩', iconName: 'newspaper-o', route: 'SummerNewsletter'},
+  { id: '5', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
+  { id: '6', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
+  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
+  { id: '8', title: 'Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
+  // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
 ];
 
 type RootStackParamList = {
@@ -27,24 +28,32 @@ type RootStackParamList = {
   QuickLinks: undefined
   Handbook: undefined;
   CheckInScreen: undefined;
+  NotificationFormScreen: undefined;
   Details: { id: number };
+
 };
 
 type Props = {
   navigation: NavigationProp<RootStackParamList, 'Home'>;
+  isAdmin: boolean;
+  isVolunteer: boolean;
 }
-const HomeScreen = () => {
+const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
   const [currentDate, setCurrentDate] = useState('');
-  const [gratitudeMessage, setGratitudeMessage] = useState("Thank you so much for your work today!!!");
+  const [gratitudeMessage, setGratitudeMessage] = useState("Thank you so much for your work today!!");
+  let slicedOptions;
+  if(!isAdmin){
+    slicedOptions = options.slice(1);
+  } else {
+    slicedOptions = options;
+  }
 
   useEffect(() => {
     const fetchGratitudeMessage = async () => {
       try {
         const querySnapshot = await firestore()
           .collection('gratitudeMessage')
-          .orderBy('createdAt', 'desc')
-          .limit(1)
-          .get();
+          .get()
   
         if (!querySnapshot.empty) {
           const doc = querySnapshot.docs[0];
@@ -114,10 +123,10 @@ const HomeScreen = () => {
       );
       
     } 
-    else if(option.title == "Virtual Assistant"){
+    else if(option.title == "Send Notification"){
       navigation.dispatch(
         CommonActions.navigate({
-          name: "VirtualAssistant",
+          name: "NotificationFormScreen",
         }
         )
         
@@ -153,12 +162,14 @@ const HomeScreen = () => {
       <View style={styles.header}>
         
         <Text style={styles.dateText}>{currentDate}</Text>
-        <Text style={styles.headerText}>Dashboard</Text>
+        <Text style={styles.headerText}>{isAdmin ? "Admin Dashboard" : isVolunteer ? "Volunteer Dashboard" : "Dashboard"}</Text>
         
       </View>
+      {isAdmin||isVolunteer ? 
       <Text style = {styles.gratitude}>{gratitudeMessage}</Text>
-      {options.map((option) => (
-        <TouchableOpacity key={option.id} onPress={() => handleOptionPress(option)}>
+        : <></>}
+      {slicedOptions.map((option) => (
+        <TouchableOpacity disabled = {(isAdmin || isVolunteer) && option.title === "Check In"} key={option.id} onPress={() => handleOptionPress(option)}>
           <View style={styles.box}>
             <ListItem>
               <Icon name={option.iconName} size={20} color="#005987" />

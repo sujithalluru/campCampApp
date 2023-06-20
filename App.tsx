@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen1';
@@ -13,6 +13,11 @@ import QuickLinks from './QuickLinks';
 import SummerNewsletter from './SummerNewsletter';
 import Handbook from './Handbook';
 import CheckInScreen from './CheckInScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import functions from '@react-native-firebase/functions';
+import NotificationFormScreen from './NotifcationSendScreen';
+import firestore from "@react-native-firebase/firestore";
+
 // ...
 // require('dotenv').config();
 
@@ -35,6 +40,11 @@ const Stack = createStackNavigator();
 
 
 const App = () => {
+  const [isLogIn, setLogIn] = useState(false);
+  const [role, setRole] = useState("general");
+  const [loading, setLoading] = useState(true);
+  const validateCode = functions().httpsCallable('validateCode');
+
   useEffect(() => {
     const requestUserPermission = async () => {
       const authStatus = await messaging().requestPermission();
@@ -75,11 +85,45 @@ const App = () => {
       // });
   });
     messaging().subscribeToTopic('all');
+    const checkLogIn = async () => {
+      
+      const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+      console.log(isLoggedIn);
+      const role = await AsyncStorage.getItem("role")
+      const code = await AsyncStorage.getItem("code")
+      if (isLoggedIn == '1') {
+      setLogIn(true);
+      validateCode({ role: role, code: Number(code) })
+      .then(async (result) => {
+        // The code was valid
+        // Proceed with registration...
+        // Alert.alert('Code validated successfully.');
+        setRole(role ? role : "");
+        setLoading(false);
+      })
+      .catch((error) => {
+        // The code was invalid
+        // Show an error message...
+        setRole("general");
+        setLoading(false);
+      });
+      } else {
+      setLogIn(false);
+      setLoading(false);
+      }
+    }
+    checkLogIn();
   }, []);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{
+      {loading ? (
+      // Render a View with a splash screen, for example:
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 300, height: 300, margin:20, }} />
+      </View>
+    ) : (
+      <Stack.Navigator initialRouteName={isLogIn? role==="admin" ? "MainAdmin" : role==="volunteer" ? "MainVolunteer" : "Main" : "Login"} screenOptions={{
     headerTitle: () => (
       <View style={{ alignItems: 'center', flexDirection: 'row' }}>
         <Text style={[styles.title]}>Camp CAMP</Text>
@@ -98,19 +142,20 @@ const App = () => {
             headerShown: true
           }} />
         <Stack.Screen 
-          name="Main" 
-          component={MainScreen} 
-          options={{
-            headerShown: true
-          }} 
-        />
+          name="Main"
+          options={{ headerShown: true }}>
+          {props => <MainScreen {...props} isAdmin={false} isVolunteer={false} />}
+        </Stack.Screen>
         <Stack.Screen 
-          name="MainAdmin" 
-          component={MainAdminScreen} 
-          options={{
-            headerShown: true
-          }} 
-        />
+          name="MainVolunteer"
+          options={{ headerShown: true }}>
+          {props => <MainScreen {...props} isAdmin={false} isVolunteer={true} />}
+        </Stack.Screen>
+        <Stack.Screen 
+          name="MainAdmin"
+          options={{ headerShown: true }}>
+          {props => <MainScreen {...props} isAdmin={true} isVolunteer={false} />}
+        </Stack.Screen>
         <Stack.Screen 
           name="QuickLinks" 
           component={QuickLinks} 
@@ -139,7 +184,16 @@ const App = () => {
             headerShown: true
           }} 
         />
+        <Stack.Screen 
+          name="NotificationFormScreen" 
+          component={NotificationFormScreen} 
+          options={{
+            headerShown: true
+          }} 
+        />
+
       </Stack.Navigator>
+    )}
     </NavigationContainer>
   );
 };

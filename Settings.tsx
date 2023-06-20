@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 type RootStackParamList = {
   Login: undefined;
@@ -17,7 +19,14 @@ interface SettingsScreenProps {
 
 const Settings = ({ navigation }: SettingsScreenProps) => {
 
-  const handleLogoutPress = () => {
+  const handleLogoutPress = async () => {
+    await AsyncStorage.setItem('isLoggedIn', '0');
+    await AsyncStorage.setItem('role', '');
+    await AsyncStorage.setItem('code', '');
+    await AsyncStorage.setItem("volTime", '');
+    await AsyncStorage.setItem("installTime", '');
+    messaging()
+    .unsubscribeFromTopic('volunteer')
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],  // use the name of your home screen here

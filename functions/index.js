@@ -39,8 +39,8 @@ exports.sendNotificationOnWrite = functions.firestore
                 logger.error('Error sending message:', error);
             });
     });
-exports.sendGratitudeOnWrite = functions.firestore
-    .document('gratitudeMessage/{gratitudeMessageId}')
+exports.sendvolNotifOnWrite = functions.firestore
+    .document('volnotifications/{notificationId}')
     .onCreate((snap, context) => {
         const notification  = snap.data();
 
@@ -49,7 +49,7 @@ exports.sendGratitudeOnWrite = functions.firestore
                 title: notification.title,  // getting title from the document
                 body: notification.body,  // getting body from the document
             },
-            topic: 'all',
+            topic: 'volunteer',
         };
 
         // Send a message to devices subscribed to the provided topic.

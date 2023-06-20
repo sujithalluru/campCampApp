@@ -9,6 +9,7 @@ import CalendarEvent from './ToDo';
 import Settings from './Settings';
 import Feedback from './Feedback';
 import HomeScreen from './HomeScreen';
+import NotificationsScreen from './NotificationScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +21,10 @@ const icons = {
   Settings: 'cog',
 };
 
+type Props = {
+  isAdmin: boolean;
+  isVolunteer: boolean;
+}
 
   const SettingsScreen = () => {
     const navigation = useNavigation();
@@ -60,60 +65,7 @@ const icons = {
     );
   };
 
-  const NotificationsScreen = () => {
-    const navigation = useNavigation();
-    const [isConnected, setIsConnected] = useState(false);
-  
-    useEffect(() => {
-      // navigation.setOptions({
-      //   headerRight: () => <SettingsDropdown handleLogout={handleLogout} />,
-      // });
-      NetInfo.fetch().then(state => {
-        if (state.isConnected !== null) {
-          setIsConnected(state.isConnected);
-        }
-      });
-      const unsubscribe = NetInfo.addEventListener(state => {
-        if (state.isConnected !== null) {
-          setIsConnected(state.isConnected);
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-    }, [navigation]);
-  
-    return (
-      <>
-        {isConnected ? (
-          <ScrollView >
-          {/* <ScrollView> */}
-          <Text style={styles.work}>
-            Previous Notifications
-          </Text>
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          <CalendarEvent id={1} summary={"Item 1"} start={""} end={""} />
-          {/* </ScrollView> */}
-        </ScrollView>
-        ) : (
-          <View >
-            <Icon name="wifi" size={32} color="#888" />
-            <Text>No Internet Connection</Text>
-          </View>
-        )}
-      </>
-    );
-  };
+
   const FeedbackScreen = () => {
     const navigation = useNavigation();
     const [isConnected, setIsConnected] = useState(false);
@@ -153,8 +105,7 @@ const icons = {
     );
   };
 
-const MainScreen = () => {
-  return (
+const MainScreen = ({isAdmin, isVolunteer}: Props) => {  return (
     <Tab.Navigator
   screenOptions={({ route }) => ({
     tabBarIcon: ({ color, size }) => {
@@ -168,8 +119,12 @@ const MainScreen = () => {
     tabBarInactiveTintColor: '#666666', // previously: tabBarOptions.inactiveTintColor
   })}
 >
-  <Tab.Screen name="Home" component={HomeScreen} />
-  <Tab.Screen name="Notifs" component={NotificationsScreen} />
+<Tab.Screen name="Home">
+        {props => <HomeScreen {...props} isAdmin={isAdmin} isVolunteer={isVolunteer} />}
+  </Tab.Screen> 
+  <Tab.Screen name="Notifs">
+        {props => <NotificationsScreen {...props} isNotGeneral={isAdmin||isVolunteer} />}
+  </Tab.Screen>   
   <Tab.Screen name="Settings" component={SettingsScreen} />
 </Tab.Navigator>
 

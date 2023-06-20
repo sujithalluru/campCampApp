@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Alert } from 'react-native';
+import { View, StyleSheet, Text, Alert, ScrollView } from 'react-native';
 import { Button, TextInput, Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firestore from '@react-native-firebase/firestore';
 
 type RootStackParamList = {
   Login: undefined;
@@ -24,9 +26,12 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     try {
       await auth().signInWithEmailAndPassword(email, password);
       // Go to the main screen after successful login.
+      await AsyncStorage.setItem('isLoggedIn', '1');
+      const currentTime = firestore.Timestamp.now().toDate();
+      await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Main' }], // use the name of your home screen here
+        routes: [{ name: 'Main' }], 
       });
     } catch (error) {
       console.error(error);
@@ -51,6 +56,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         },
       }}
     >
+      <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>Log In</Text>
         <TextInput
@@ -81,6 +87,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           Don't have an account? Sign Up
         </Button>
       </View>
+      </ScrollView>
     </PaperProvider>
   );
 };

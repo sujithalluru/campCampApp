@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Button, TextInput, Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   Login: undefined;
@@ -18,6 +20,18 @@ interface SignupScreenProps {
 }
 
 const SignupScreen = ({ navigation }: SignupScreenProps) => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginLeft: 16 }}
+        >
+          <Icon name="chevron-left" size={24} color="white" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -27,6 +41,8 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       // Go to the main screen after successful sign up.
+      const currentTime = firestore.Timestamp.now().toDate();
+      await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
       navigation.navigate('Main');
     } catch (error) {
       console.error(error);
@@ -41,6 +57,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
         },
       }}
     >
+      <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>Sign Up</Text>
         <TextInput
@@ -83,6 +100,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           Already have an account? Log In
         </Button>
       </View>
+      </ScrollView>
     </PaperProvider>
   );
 };
