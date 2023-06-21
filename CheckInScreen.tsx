@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Alert, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Alert, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { Button, TextInput, List, Divider, Provider as PaperProvider, Text } from 'react-native-paper';
 import functions from '@react-native-firebase/functions';
 import { useNavigation, NavigationProp, CommonActions } from '@react-navigation/native';
@@ -27,7 +27,7 @@ const CheckInScreen = () => {
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginLeft: 16 }}
+          style={{ marginLeft: 16}}
         >
           <Icon name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
@@ -162,6 +162,15 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
   },
+  titleX: {
+    fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
+    fontWeight: '700',
+    fontSize: 40,
+    // marginRight: -15,
+    //marginLeft: 50,
+    marginBottom: 10,
+    color: '#ffffff',
+    },
 });
 
 export default CheckInScreen;

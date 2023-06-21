@@ -11,7 +11,7 @@ const NotificationFormScreen = () => {
   const [recipient, setRecipient] = useState(' ');
   const [menuVisible, setMenuVisible] = useState(false);
   const [isSupportMessage, setIsSupportMessage] = useState(false);
-
+ 
 
   const handleMenuToggle = () => {
     setMenuVisible(!menuVisible);
@@ -27,73 +27,95 @@ const NotificationFormScreen = () => {
       Alert.alert('Please select a role and enter a title and body.');
       return;
     }
-    if(recipient === "general"){
-      firestore()
-        .collection('notifications')
-        .add({
-          title: title,
-          body: body,
-          createdAt: firestore.Timestamp.now()
-        })
-        .then(() => {
-          console.log('Notification sent successfully');
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    } else {
-      firestore()
-        .collection('volnotifications')
-        .add({
-          title: title,
-          body: body,
-          createdAt: firestore.Timestamp.now()
-        })
-        .then(() => {
-          console.log('Notification sent successfully');
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-      firestore()
-        .collection('allNotifications')
-        .add({
-          title: title,
-          body: body,
-          createdAt: firestore.Timestamp.now()
-        })
-        .then(() => {
-          console.log('Notification sent successfully');
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-    if(isSupportMessage){
-      firestore()
-        .collection('gratitudeMessage')
-        .doc('gratitude')
-        .set({
-          title: title,
-          body: body,
-          createdAt: firestore.Timestamp.now()
-        })
-        .then(() => {
-          console.log('Notification sent successfully');
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    }
-    
-  }
+  
+    Alert.alert(
+      'Confirm Notification',
+      `Are you sure you want to send the notification to ${recipient}? This action is irreversible.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Submit',
+          onPress: async () => {
+            if (recipient === "general") {
+              // Sending notification to general collection
+              try {
+                await firestore()
+                  .collection('notifications')
+                  .add({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
+                console.log('Notification sent successfully');
+                Alert.alert('Notification Sent', 'The notification was sent successfully.');
+                setTitle('');
+                setBody('');
+              } catch (error) {
+                console.error('Error:', error);
+                Alert.alert('Error', 'An error occurred while sending the notification.');
+              }
+            } else {
+              // Sending notification to volnotifications collection and allNotifications collection
+              try {
+                await firestore()
+                  .collection('volnotifications')
+                  .add({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
+                await firestore()
+                  .collection('allNotifications')
+                  .add({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
+                console.log('Notification sent successfully');
+                Alert.alert('Notification Sent', 'The notification was sent successfully.');
+                setTitle('');
+                setBody('');
+              } catch (error) {
+                console.error('Error:', error);
+                Alert.alert('Error', 'An error occurred while sending the notification.');
+              }
+            }
+  
+            if (isSupportMessage) {
+              // Saving gratitudeMessage
+              try {
+                await firestore()
+                  .collection('gratitudeMessage')
+                  .doc('gratitude')
+                  .set({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
+                
+                setTitle('');
+                setBody('');
+              } catch (error) {
+                console.error('Error:', error);
+              }
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  
   const navigation = useNavigation();
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginLeft: 16 }}
+          style={{ marginLeft: 16, marginRight: -40 }}
         >
           <Icon name="chevron-left" size={24} color="white" />
         </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Button, TextInput, Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
@@ -25,7 +25,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ marginLeft: 16 }}
+          style={{ marginLeft: 16, marginRight: -40 }}
         >
           <Icon name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
@@ -38,6 +38,10 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
   const [lastName, setLastName] = useState('');
 
   const onSignUp = async () => {
+    if (firstName === '' || lastName === '' || password === "" || email === "") {
+      Alert.alert('Please fill in all text boxes.');
+      return;
+    }
     try {
       await auth().createUserWithEmailAndPassword(email, password);
       // Go to the main screen after successful sign up.
@@ -45,7 +49,8 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
       navigation.navigate('Main');
     } catch (error) {
-      console.error(error);
+      Alert.alert('Error', error.message.includes("weak-password") ? "Your password is too weak, please include a Capital letter, special character, a number, and at least 8 characters" :
+        error.message.includes("invalid-email") ? "Please provide a valid email" : error.message);
     }
   };
 

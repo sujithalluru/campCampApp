@@ -123,18 +123,35 @@ const App = () => {
           <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 300, height: 300, margin:20, }} />
       </View>
     ) : (
-      <Stack.Navigator initialRouteName={isLogIn? role==="admin" ? "MainAdmin" : role==="volunteer" ? "MainVolunteer" : "Main" : "Login"} screenOptions={{
-    headerTitle: () => (
-      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-        <Text style={[styles.title]}>Camp CAMP</Text>
-        <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 60, height: 60, marginBottom: 20, marginRight: -5, }} />
-      </View>
-    ),
-    headerStyle: {
-      backgroundColor: '#086c9c',
-      height: 130,
-    },
-  }}>
+      <Stack.Navigator
+        initialRouteName={isLogIn ? (role === 'admin' ? 'MainAdmin' : role === 'volunteer' ? 'MainVolunteer' : 'Main') : 'Login'}
+        screenOptions={{
+          /* headerTitle: () => (
+<View style={{ alignItems: 'center' }}>
+<Image source={require('../assets/lisd_white_2.jpg')} style={{ width: 258, height: 68, marginBottom: 12, marginLeft: 10,}} />
+</View>
+),
+headerStyle: {
+backgroundColor: '#005a87',
+height: 125,
+// marginBottom: 0,
+}, */
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Text style={[styles.title]}>Camp CAMP</Text>
+              
+                {/* <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={styles.logo} /> */}
+              
+            </View>
+          ),
+          headerStyle: {
+            backgroundColor: '#086c9c',
+            height: Platform.OS === 'ios' ? 120 : 100, // Adjust the height based on your needs
+            borderBottomWidth: 0, // Remove the bottom border if necessary
+            elevation: 0, // Remove shadow for Android
+          },
+        }}
+      >
         <Stack.Screen name="Login" component={LoginScreen} options={{
             headerShown: true
           }} />
@@ -202,11 +219,28 @@ title: {
   fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
   fontWeight: '700',
   fontSize: 40,
-  marginRight: 15,
-  marginLeft: 50,
+  // marginRight: -15,
+  //marginLeft: 50,
   marginBottom: 10,
   color: '#ffffff',
-  }
+  },
+  headerTitleContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  logoContainer: {
+    width: 60,
+    height: 60,
+    marginRight: 10,
+    // Add right margin to separate the logo from the text
+  },
+  logo: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    resizeMode: 'contain',
+  },
 });
 
 export default App;

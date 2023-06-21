@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         routes: [{ name: 'Main' }], 
       });
     } catch (error) {
-      console.error(error);
+      Alert.alert('Error', error.message.includes("formatted") ? "Email formatted incorrectly" : "Your username or password may be incorrect")
     }
   };
 
@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       await auth().sendPasswordResetEmail(email);
       Alert.alert('Password reset link sent to your email');
     } catch (error) {
-      console.error(error);
+      Alert.alert('Error', error.message.includes("provided") ? "Please provide an email address above" : error.message.includes("formatted") ? "Email formatted incorreclty": error.message.includes("deleted") ? "This user does not exist, please check the spelling of your email": "Unknown error occured, please make a new account")
     }
   };
 

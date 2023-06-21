@@ -199,8 +199,8 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   headerText: {
-    fontSize: 40,
-    marginLeft: -98,
+    fontSize: 35,
+    marginLeft: -110,
     marginBottom:10,
     marginTop: -13,
     color: "#005987",
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     
   },
   dateText: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'gray',
     marginTop:40,
     marginLeft: 5,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 6,
     marginBottom:10,
-    marginTop: 3,
+    marginTop: 1,
     color: "#4c9134",
     fontWeight: "600",
   }

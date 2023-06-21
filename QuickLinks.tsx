@@ -55,16 +55,16 @@ const navigation = useNavigation();
 
 
 React.useLayoutEffect(() => {
-navigation.setOptions({
-headerLeft: () => (
-<TouchableOpacity
-onPress={() => navigation.goBack()}
-style={{ marginLeft: 16 }}
->
-<Icon name="chevron-left" size={24} color="white" />
-</TouchableOpacity>
-),
-});
+  navigation.setOptions({
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ marginLeft: 16, marginRight: -40 }}
+      >
+        <Icon name="chevron-left" size={24} color="white" />
+      </TouchableOpacity>
+    ),
+  });
 }, [navigation]);
 
 
