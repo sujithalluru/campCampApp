@@ -14,7 +14,7 @@ const options = [
   { id: '5', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
   { id: '6', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
   { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
-  { id: '8', title: 'Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
+  { id: '8', title: 'App Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
   // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
 ];
 
@@ -133,7 +133,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       );
       
     } 
-    else if(option.title == "Feedback"){
+    else if(option.title == "App Feedback"){
       navigation.dispatch(
         CommonActions.navigate({
           name: "GoogleFeedback",

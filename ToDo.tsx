@@ -5,9 +5,10 @@ interface Props {
   id: React.Key,
   summary: string,
   description: string,
+  createdAt: Date, // Add this line
 }
 
-const CalendarEvent = ({ id, summary, description }: Props) => {
+const CalendarEvent = ({ id, summary, description, createdAt}: Props) => {
     return (
       <View key={id} style={styles.container}>
         <View style={styles.blueStripWrapper}>
@@ -17,6 +18,9 @@ const CalendarEvent = ({ id, summary, description }: Props) => {
           <Text style={styles.title}>{summary}</Text>
           <Text style={styles.time}>
             {description}
+          </Text>
+          <Text style={styles.createdAt}>
+            {createdAt ? createdAt.toLocaleString() : 'N/A'}
           </Text>
         </View>
       </View>
@@ -59,8 +63,8 @@ const styles = StyleSheet.create({
     marginLeft: 10, // add some left margin
   },
   time: {
-    fontSize: 15,
-    color: '#999',
+    fontSize: 16,
+    color: '#5A5A5A',
     marginBottom: 2.5,
   },
   title: {
@@ -71,6 +75,10 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 16,
+    color: '#999',
+  },
+  createdAt: {
+    fontSize: 14,
     color: '#999',
   },
 });

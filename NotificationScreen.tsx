@@ -23,6 +23,7 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     const [time, setTime] = useState();
     const [loading, setLoading] = useState(false);
     const [events, setEvents] = useState<{ id: string, title: string, body: string, createdAt: Date }[]>([]);
+    const [allLoaded, setAllLoaded] = useState(false);
 
     useEffect(() => {
       NetInfo.fetch().then(state => {
@@ -42,16 +43,19 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     useEffect(() => {
       const fetchTime = async () => {
         let storedTime;
-    
+      
         if(isNotGeneral) {
           storedTime = await AsyncStorage.getItem("volTime");
         } else {
           storedTime = await AsyncStorage.getItem("installTime");
         }
-    
+      
+        console.log('Stored time:', storedTime); // Add this line
+
+
         if (storedTime !== null) {
-          // Make sure to convert the stored time to a number
-          setTime(Number(JSON.parse(storedTime)));
+          // Convert the stored time back into a number
+          setTime(Number(storedTime));
         }
       };
     
@@ -65,56 +69,79 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     }, [isConnected, time]);
     
     const loadEvents = async () => {
+      if (loading || allLoaded) {
+        return;
+      }
+    
       setLoading(true);
       const eventRef = firestore().collection(isNotGeneral ? 'allNotifications' : "notifications");
       let query = eventRef.orderBy('createdAt', 'desc').limit(20);
     
-      if (time) {
-        Alert.alert(firebase.firestore.Timestamp.fromMillis(time).toString())
-        query = query.where('createdAt', '>', firebase.firestore.Timestamp.fromMillis(time));
-      }
-    
       try {
-        const snapshot = await query.get();
-        const newEvents = snapshot.docs.map(doc => {
+        let snapshot;
+        if (time) {
+          snapshot = await query.get();
+          snapshot = snapshot.docs.filter(doc => {
+            const data = doc.data();
+            // Convert the createdAt Timestamp to milliseconds since the epoch
+            const createdAtMillis = data.createdAt.toMillis();
+            // Only include the document if createdAt is after time
+            return createdAtMillis > time;
+          });
+        } else {
+          snapshot = await query.get();
+        }
+    
+        const newEvents = snapshot.map(doc => {
           const data = doc.data();
           return {
             id: doc.id,
             title: data.title,
             body: data.body,
-            createdAt: data.createdAt.toDate(), // convert Timestamp to JavaScript Date
+            createdAt: data.createdAt.toDate(),
           };
         });
     
-        if (snapshot.docs.length > 0) {
-          const lastDoc = snapshot.docs[snapshot.docs.length - 1];
+        if (newEvents.length > 0) {
+          const lastDoc = snapshot[snapshot.length - 1];
           const lastDocTime = lastDoc.data().createdAt.toMillis();
           setTime(lastDocTime);
+          setEvents(prevEvents => [...prevEvents, ...newEvents]);
         }
     
-        setEvents(prevEvents => [...prevEvents, ...newEvents]);
+        // If the last fetched batch of notifications is smaller than the limit, set allLoaded to true
+        if (newEvents.length < 20) {
+          setAllLoaded(true);
+        }
+    
         setLoading(false);
       } catch (error) {
         console.log(error);
         setLoading(false);
       }
     };
-
+    
+    
+    
+    
+    
+    
     const renderEvent = ({ item }: { item: CalendarEventItem }) => (
-      <CalendarEvent summary={item.title} description={item.body} id = {item.id}  />
+      <CalendarEvent summary={item.title} description={item.body} id = {item.id} createdAt={item.createdAt} />
   );
 
     return (
         <>
           {isConnected ? (
             <FlatList
-                data={events}
-                renderItem={renderEvent}
-                keyExtractor={item => item.id}
-                onEndReached={loadEvents}
-                ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-                ListHeaderComponent={<Text style={styles.work}>Previous Notifications</Text>}
-            />
+            data={events}
+            renderItem={renderEvent}
+            keyExtractor={item => item.id}
+            onEndReached={loadEvents}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+            ListHeaderComponent={<Text style={styles.work}>Previous Notifications</Text>}
+          />
           ) : (
             <View>
               <Icon name="wifi" size={32} color="#888" />

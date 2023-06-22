@@ -63,7 +63,7 @@ exports.sendvolNotifOnWrite = functions.firestore
             });
     });
 
-exports.sendCodes = functions.pubsub.schedule('every day 00:00').onRun(async (context) => {
+exports.sendCodes = functions.https.onCall(async (data, context) => {
   let volunteerCode = Math.floor(100000 + Math.random() * 900000); // generate 6-digit code
   let adminCode = Math.floor(100000 + Math.random() * 900000); // generate 6-digit code
 
@@ -79,10 +79,13 @@ exports.sendCodes = functions.pubsub.schedule('every day 00:00').onRun(async (co
   // Save codes to database
   let db = admin.firestore();
   let docRef = db.collection('codes').doc('current');
-  return docRef.set({
+   await docRef.set({
     volunteer: volunteerCode,
     admin: adminCode
   });
+  return {
+    message: 'Codes generated and email sent.'
+  };
 });
 
 exports.validateCode = functions.https.onCall(async (data, context) => {

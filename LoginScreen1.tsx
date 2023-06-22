@@ -27,7 +27,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       await auth().signInWithEmailAndPassword(email, password);
       // Go to the main screen after successful login.
       await AsyncStorage.setItem('isLoggedIn', '1');
-      const currentTime = firestore.Timestamp.now().toDate();
+      const currentTime = firestore.Timestamp.now().toMillis();
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
       navigation.reset({
         index: 0,

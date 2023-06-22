@@ -17,26 +17,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import functions from '@react-native-firebase/functions';
 import NotificationFormScreen from './NotifcationSendScreen';
 import firestore from "@react-native-firebase/firestore";
-
+import GoogleFeedback from './GoogleFeedback';
 // ...
 // require('dotenv').config();
 
 const Stack = createStackNavigator();
 
-// const config = {
-//   clientId: '580880783847-4593v45hoq45rcfh6eusst0uaibum5l5.apps.googleusercontent.com',
-//   appId: '1:580880783847:ios:77f195868081495d818542',
-//   apiKey: 'AIzaSyBAWYqugVCaoPa0SZu5r20PDfllQCmw1H8',
-//   databaseURL: '',
-//   storageBucket: 'campapp-388922.appspot.com',
-//   messagingSenderId: '580880783847',
-//   projectId: 'campapp-388922',
-// };
-// try {
-//   firebase.initializeApp(config);
-// } catch (error) {
-//   console.log("error w firebase")
-// }
+
 
 
 const App = () => {
@@ -126,29 +113,15 @@ const App = () => {
       <Stack.Navigator
         initialRouteName={isLogIn ? (role === 'admin' ? 'MainAdmin' : role === 'volunteer' ? 'MainVolunteer' : 'Main') : 'Login'}
         screenOptions={{
-          /* headerTitle: () => (
-<View style={{ alignItems: 'center' }}>
-<Image source={require('../assets/lisd_white_2.jpg')} style={{ width: 258, height: 68, marginBottom: 12, marginLeft: 10,}} />
-</View>
-),
-headerStyle: {
-backgroundColor: '#005a87',
-height: 125,
-// marginBottom: 0,
-}, */
           headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Text style={[styles.title]}>Camp CAMP</Text>
-              
-                {/* <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={styles.logo} /> */}
-              
-            </View>
+            // <View style={{ alignItems: 'center' }}>
+              <Text style={styles.title}>Camp CAMP</Text>
+                            
+            // </View>
           ),
           headerStyle: {
             backgroundColor: '#086c9c',
-            height: Platform.OS === 'ios' ? 120 : 100, // Adjust the height based on your needs
-            borderBottomWidth: 0, // Remove the bottom border if necessary
-            elevation: 0, // Remove shadow for Android
+            height: 120, // Adjust the height based on your needs
           },
         }}
       >
@@ -204,6 +177,13 @@ height: 125,
         <Stack.Screen 
           name="NotificationFormScreen" 
           component={NotificationFormScreen} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="GoogleFeedback" 
+          component={GoogleFeedback} 
           options={{
             headerShown: true
           }} 

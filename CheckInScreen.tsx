@@ -60,8 +60,8 @@ const CheckInScreen = () => {
         // The code was valid
         // Proceed with registration...
         // Alert.alert('Code validated successfully.');
-        const currentTime = firestore.Timestamp.now().toDate();
-        await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
+        const currentTime = firestore.Timestamp.now().toMillis();
+await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
         if(role === "volunteer"){
           messaging().subscribeToTopic("volunteer");
           await AsyncStorage.setItem('role', role);
