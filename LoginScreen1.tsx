@@ -5,6 +5,7 @@ import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 type RootStackParamList = {
   Login: undefined;
@@ -29,6 +30,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       await AsyncStorage.setItem('isLoggedIn', '1');
       const currentTime = firestore.Timestamp.now().toMillis();
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
+      messaging().subscribeToTopic('all');
+
       navigation.reset({
         index: 0,
         routes: [{ name: 'Main' }], 

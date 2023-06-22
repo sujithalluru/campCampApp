@@ -71,7 +71,6 @@ const App = () => {
       //   },
       // });
   });
-    messaging().subscribeToTopic('all');
     const checkLogIn = async () => {
       
       const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');

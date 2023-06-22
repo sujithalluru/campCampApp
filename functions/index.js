@@ -79,13 +79,21 @@ exports.sendCodes = functions.https.onCall(async (data, context) => {
   // Save codes to database
   let db = admin.firestore();
   let docRef = db.collection('codes').doc('current');
-   await docRef.set({
+  await docRef.set({
     volunteer: volunteerCode,
     admin: adminCode
   });
-  return {
-    message: 'Codes generated and email sent.'
-  };
+  const tokensSnapshot = await admin.firestore().collection('tokens').where('topic', '==', 'volunteer').get();
+
+  // Unsubscribe each token from the topic and delete the token from Firestore
+  const unsubscribePromises = [];
+  for (const doc of tokensSnapshot.docs) {
+    unsubscribePromises.push(admin.messaging().unsubscribeFromTopic(doc.id, 'volunteer'));
+    unsubscribePromises.push(doc.ref.delete());
+  }
+
+  await Promise.all(unsubscribePromises);
+  return { result: 'Codes sent and devices unsubscribed from topic.' };
 });
 
 exports.validateCode = functions.https.onCall(async (data, context) => {

@@ -27,10 +27,14 @@ const Settings = ({ navigation }: SettingsScreenProps) => {
     await AsyncStorage.setItem("installTime", '');
     messaging()
     .unsubscribeFromTopic('volunteer')
+    messaging()
+    .unsubscribeFromTopic('all')
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],  // use the name of your home screen here
     });
+    
+    
   };
 
   return (

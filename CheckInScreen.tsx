@@ -64,6 +64,8 @@ const CheckInScreen = () => {
 await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
         if(role === "volunteer"){
           messaging().subscribeToTopic("volunteer");
+          const token = await messaging().getToken();
+          firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
           await AsyncStorage.setItem('role', role);
           await AsyncStorage.setItem('code', code)
           navigation.reset({
@@ -73,6 +75,8 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
         }
         if(role === "admin"){
           messaging().subscribeToTopic("volunteer");
+          const token = await messaging().getToken();
+          firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
           await AsyncStorage.setItem('role', role);
           await AsyncStorage.setItem('code', code)
           navigation.reset({
