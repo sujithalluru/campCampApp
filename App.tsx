@@ -51,13 +51,10 @@ const App = () => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
       
       // Display notification with notifee
-      // await notifee.displayNotification({
-      //   title: remoteMessage.notification.title,
-      //   body: remoteMessage.notification.body,
-      //   android: {
-      //     channelId: 'your-channel-id', // make sure you create this channel in your app
-      //   },
-      // });
+      await notifee.displayNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body,
+      });
   });
 
   // When a message arrives while the app is in the background or quit
@@ -115,10 +112,10 @@ const App = () => {
         initialRouteName={isLogIn ? (role === 'admin' ? 'MainAdmin' : role === 'volunteer' ? 'MainVolunteer' : 'Main') : 'Login'}
         screenOptions={{
           headerTitle: () => (
-            // <View style={{ alignItems: 'center' }}>
+            <View style={{ alignItems: 'center' }}>
               <Text style={styles.title}>Camp CAMP</Text>
                             
-            // </View>
+            </View>
           ),
           headerStyle: {
             backgroundColor: '#086c9c',
