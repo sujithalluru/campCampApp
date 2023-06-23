@@ -21,6 +21,8 @@ import firestore from "@react-native-firebase/firestore";
 import GoogleFeedback from './GoogleFeedback';
 import ContactAdminsScreen from './ContactAdmin';
 import WebViewScreen from './WebViewScreen';
+import { Dimensions } from 'react-native';
+
 
 // ...
 // require('dotenv').config();
@@ -32,6 +34,7 @@ const Stack = createStackNavigator();
 
 const App = () => {
   const [isLogIn, setLogIn] = useState(false);
+  const screenHeight = Dimensions.get('window').height;
   const [role, setRole] = useState("general");
   const [loading, setLoading] = useState(true);
   const [appState, setAppState] = useState(AppState.currentState);
@@ -130,22 +133,22 @@ const App = () => {
     <NavigationContainer>
       {loading ? (
       // Render a View with a splash screen, for example:
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('/Users/sujithalluru/campCampApp/assets/ColorCAMP.png')} style={{ width: 300, height: 300, margin:20, }} />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Image source={require('./assets/ColorCAMP.png')} style={{ width: 300, height: 300, margin:20, }} />
       </View>
     ) : (
       <Stack.Navigator
         initialRouteName={isLogIn ? (role === 'admin' ? 'MainAdmin' : role === 'volunteer' ? 'MainVolunteer' : 'Main') : 'Login'}
         screenOptions={{
           headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Text style={styles.title}>Camp CAMP</Text>
-                            
+            <View style={{ alignItems: 'center'}}> 
+              <Image source={require('./assets/CampHead.png')} style={{ width: 300, height: 50, marginBottom: 15, marginLeft: 10 }} />
+         
             </View>
           ),
           headerStyle: {
             backgroundColor: '#086c9c',
-            height: 120, // Adjust the height based on your needs
+            height: screenHeight * 0.14, // Adjust the height based on your needs
           },
         }}
       >
