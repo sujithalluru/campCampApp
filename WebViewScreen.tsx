@@ -35,7 +35,7 @@ const WebViewScreen: React.FC<Props> = ({ route }) => {
   const handleLoadEnd = () => {
   };
 
-  return <WebView ref={webViewRef} source={{ uri: url }} />;
+  return <WebView ref={webViewRef} source={{ uri: url.trim() }} />;
 };
 
 export default WebViewScreen;

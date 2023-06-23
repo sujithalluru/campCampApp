@@ -18,17 +18,18 @@ type RootStackParamList = {
   };
   
   type Props = {
-    navigation: NavigationProp<RootStackParamList, 'Home'>;
+    navigation: NavigationProp<RootStackParamList, 'QuickLinks'>;
   }
 
 interface QuickLinkProps {
 url: string;
 title: string;
 description: string;
-navigation: NavigationProp<RootStackParamList, 'Home'>
+navigation: NavigationProp<RootStackParamList, 'QuickLinks'>
 }
 
 const QuickLink: React.FC<QuickLinkProps> = ({ url, title, description, navigation }) => {
+console.log(url);
 return (
 <TouchableOpacity style={styles.linkSquare} onPress={() => {
             navigation.dispatch(
@@ -83,7 +84,7 @@ React.useLayoutEffect(() => {
     headerLeft: () => (
       <TouchableOpacity
         onPress={() => navigation.goBack()}
-        style={{ marginLeft: 16, marginRight: -40 }}
+        style={{ marginLeft: 16}}
       >
         <Icon name="chevron-left" size={24} color="white" />
       </TouchableOpacity>
