@@ -10,11 +10,11 @@ const options = [
   { id: '1', title: 'Send Notification', description: 'Message volunteers with a push notification!📣', iconName: 'send-o', route: 'NotificationFormScreen' },
   { id: '2', title: 'Check In', description: 'Sign in when you arrive!⛺️', iconName: 'flag', route: 'CheckInScreen' },
   { id: '3', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
-  // { id: '4', title: 'Summer Newsletter', description: 'CAMP Chronicles!🤩', iconName: 'newspaper-o', route: 'SummerNewsletter'},
-  { id: '5', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: 'ContactTeachers' },
+  { id: '4', title: 'Download Pictures', description: 'Download your photos!🤩', iconName: 'file-picture-o', route: '', webLink:''},
+  { id: '5', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: '', webLink:'' },
   { id: '6', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'phone', route: 'News'},
-  { id: '8', title: 'App Feedback', description: 'We value your opinion!👍', iconName: 'pencil', route: 'GoogleFeedback'},
+  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'pencil-square-o', route: '', webLink:''},
+  { id: '8', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback'},
   // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
 ];
 
@@ -30,7 +30,7 @@ type RootStackParamList = {
   CheckInScreen: undefined;
   NotificationFormScreen: undefined;
   Details: { id: number };
-
+  ContactAdminsScreen: undefined;
 };
 
 type Props = {
@@ -47,6 +47,22 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
   } else {
     slicedOptions = options;
   }
+  const fetchLinks = async () => {
+    try {
+      const photoULinkSnapshot = await firestore().collection('PhotoUpload Link').doc('unique').get();
+      const photoDLinkSnapshot = await firestore().collection('PhotoDownload Link').doc('unique').get();
+      const surveyLinkSnapshot = await firestore().collection('CAMPSurvey Link').doc('unique').get();
+      
+      const photoULink = photoULinkSnapshot.data()?.data[0];
+      const photoDLink = photoDLinkSnapshot.data()?.data[0];
+      const surveyLink = surveyLinkSnapshot.data()?.data[0];
+  
+      return { photoULink, photoDLink, surveyLink };
+    } catch (error) {
+      console.log('Error fetching links:', error);
+    }
+  };
+  
 
   useEffect(() => {
     const fetchGratitudeMessage = async () => {
@@ -73,6 +89,15 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       day: 'numeric',
     });
     setCurrentDate(formattedDate);
+    const getAndSetLinks = async () => {
+      const links = await fetchLinks();
+      if (links) {
+        options.find(option => option.title === 'Upload Pictures').webLink = links.photoULink;
+        options.find(option => option.title === 'Download Pictures').webLink = links.photoDLink;
+        options.find(option => option.title === 'Complete CAMP Survey').webLink = links.surveyLink;
+      }
+    };
+    getAndSetLinks();
   }, []);
   
 
@@ -81,19 +106,16 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
   const navigation = useNavigation();
 
   const handleOptionPress = (option: { id: string; title: string; description: string; iconName: string; route?: string; webLink?: string;}) => {
-    if (option.webLink) {
-      Linking.openURL(option.webLink);
-    } else if(option.title == "Summer Newsletter"){
+    if (option.webLink && (option.title === "Upload Pictures" || option.title === "Download Pictures" || option.title === "Complete CAMP Survey")) {
       navigation.dispatch(
         CommonActions.navigate({
-          name: "SummerNewsletter",
-        }
-        )
-        
+          name: "WebViewScreen",
+          params: { url: option.webLink },
+        })
       );
-      
-    } 
-    else if(option.title == "Quick Links"){
+    } else if (option.webLink) {
+      Linking.openURL(option.webLink);
+    } else if(option.title == "Quick Links"){
       navigation.dispatch(
         CommonActions.navigate({
           name: "QuickLinks",
@@ -107,16 +129,6 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       navigation.dispatch(
         CommonActions.navigate({
           name: "CheckInScreen",
-        }
-        )
-        
-      );
-      
-    } 
-    else if(option.title == "CAMP Handbook"){
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: "Handbook",
         }
         )
         
@@ -143,10 +155,10 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       );
       
     } 
-    else if(option.title == "Contact Us"){
+    else if(option.title == "Call When in Need"){
       navigation.dispatch(
         CommonActions.navigate({
-          name: "ContactUs",
+          name: "ContactAdminsScreen",
         }
         )
         
@@ -166,7 +178,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
         
       </View>
       {isAdmin||isVolunteer ? 
-      <Text style = {styles.gratitude}>{gratitudeMessage}</Text>
+      <Text style = {styles.gratitude}>{gratitudeMessage + "👍"}</Text>
         : <></>}
       {slicedOptions.map((option) => (
         <TouchableOpacity disabled = {(isAdmin || isVolunteer) && option.title === "Check In"} key={option.id} onPress={() => handleOptionPress(option)}>

@@ -1,19 +1,45 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, View, TouchableOpacity, Text, StyleSheet, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firestore from '@react-native-firebase/firestore';
 
+type RootStackParamList = {
+    Home: undefined;
+    NewsScreen: undefined;
+    ContactTeachers: undefined;
+    BusTracking: undefined;
+    GoogleFeedback: undefined;
+    ContactUs: undefined;
+    VirtualAssistant: undefined;
+    QuickLinks: undefined
+    Details: { id: number };
+    WebViewScreen: { url: string };
+  };
+  
+  type Props = {
+    navigation: NavigationProp<RootStackParamList, 'Home'>;
+  }
 
 interface QuickLinkProps {
-link: string;
+url: string;
 title: string;
 description: string;
+navigation: NavigationProp<RootStackParamList, 'Home'>
 }
 
-
-const QuickLink: React.FC<QuickLinkProps> = ({ link, title, description }) => {
+const QuickLink: React.FC<QuickLinkProps> = ({ url, title, description, navigation }) => {
 return (
-<TouchableOpacity style={styles.linkSquare} onPress={() => console.log(link)}>
+<TouchableOpacity style={styles.linkSquare} onPress={() => {
+            navigation.dispatch(
+                CommonActions.navigate({
+                  name: "WebViewScreen",
+                  params: { url: url },
+                }
+                )
+                
+            );
+        }}>
 <Text style={styles.linkText}>{title}</Text>
 <Text style={styles.linkDescription}>{description}</Text>
 </TouchableOpacity>
@@ -23,30 +49,28 @@ return (
 
 const QuickLinks = () => {
 const [search, setSearch] = useState('');
-const linksData = [
-{ title: "Link1", link: "https://www.leanderisd.org/registration/", description: "Description" },
-{ title: "Link2", link: "https://www.leanderisd.org/attendance/", description: "Description" },
-{ title: "Link3", link: "https://www.leanderisd.org/childnutritionservices/", description: "Description" },
-{ title: "Link4", link: "https://www.leanderisd.org/calendar/", description: "Description" },
-{ title: "Link5", link: "https://www.leanderisd.org/transportation/", description: "Description" },
-{ title: "Link6", link: "https://www.leanderisd.org/homeaccesscenter/", description: "Description" },
-{ title: "Link7", link: "https://www.leanderisd.org/mlisd/", description: "Description" },
-{ title: "Link8", link: "https://www.leanderisd.org/volunteering/#pta", description: "Description" },
-{ title: "Link9", link: "https://www.leanderisd.org/committees/", description: "Description" },
-{ title: "Link10", link: "https://www.leanderisd.org/volunteering/#booster", description: "Description" },
-{ title: "Link11", link: "https://www.leanderisd.org/flyers/", description: "Description" },
-{ title: "Link12", link: "https://www.leanderisd.org/legalservices/#pia", description: "Description"},
-{ title: "Link13", link: "https://www.leanderisd.org/clothescloset/", description: "Description" },
-{ title: "Link14", link: "https://leeftx.org/", description: "Description" },
-{ title: "Link15", link: "https://www.leanderisd.org/attendancezones/", description: "Description" },
-{ title: "Link16", link: "https://www.leanderisd.org/immunizations/", description: "Description" },
+const [linksData, setLinksData] = useState<QuickLinkProps[]>([]);
+useEffect(() => {
+  const fetchLinks = async () => {
+    const docRef = firestore().collection('OtherQuick Links').doc('unique');
+    const doc = await docRef.get();
+    if (doc.exists) {
+      let data = doc.data();
+      if (data) {
+        const updatedData = data.data.map((admin: any) => ({
+          title: admin.title,
+          description: admin.description,
+          url: admin.url,
+        }));
+        setLinksData(updatedData);
+      }
+    } else {
+      console.error('No such document!');
+    }
+  };
 
-
-
-
-// add as many links as needed
-];
-
+  fetchLinks();
+}, []);
 
 const filteredLinksData = linksData.filter((item) => item.title.toLowerCase().includes(search.toLowerCase()));
 
@@ -88,7 +112,7 @@ return (
 
 <ScrollView contentContainerStyle={styles.linksContainer}>
 {filteredLinksData.map((item, index) => (
-<QuickLink key={index} title={item.title} link={item.link} description={item.description} />
+<QuickLink key={index} title={item.title} url={item.url} description={item.description} navigation = {navigation}/>
 ))}
 </ScrollView>
 </View>

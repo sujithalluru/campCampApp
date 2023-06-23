@@ -18,6 +18,8 @@ import functions from '@react-native-firebase/functions';
 import NotificationFormScreen from './NotifcationSendScreen';
 import firestore from "@react-native-firebase/firestore";
 import GoogleFeedback from './GoogleFeedback';
+import ContactAdminsScreen from './ContactAdmin';
+import WebViewScreen from './WebViewScreen';
 // ...
 // require('dotenv').config();
 
@@ -183,6 +185,20 @@ const App = () => {
         <Stack.Screen 
           name="GoogleFeedback" 
           component={GoogleFeedback} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="ContactAdminsScreen" 
+          component={ContactAdminsScreen} 
+          options={{
+            headerShown: true
+          }} 
+        />
+        <Stack.Screen 
+          name="WebViewScreen" 
+          component={WebViewScreen} 
           options={{
             headerShown: true
           }} 
