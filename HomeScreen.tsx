@@ -5,17 +5,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp, CommonActions } from '@react-navigation/native';
 import firestore from "@react-native-firebase/firestore";
+import { AppState } from 'react-native';  // <-- Import AppState here
+
 
 const options = [
-  { id: '1', title: 'Send Notification', description: 'Message volunteers with a push notification!📣', iconName: 'send-o', route: 'NotificationFormScreen' },
-  { id: '2', title: 'Check In', description: 'Sign in when you arrive!⛺️', iconName: 'flag', route: 'CheckInScreen' },
-  { id: '3', title: 'Upload Pictures', description: 'Send us camper pics!😃', iconName: 'camera-retro', route: 'QuickLinksScreen' },
-  { id: '4', title: 'Download Pictures', description: 'Download your photos!🤩', iconName: 'file-picture-o', route: '', webLink:''},
-  { id: '5', title: 'Call When in Need', description: 'Emergencies!!☎️', iconName: 'phone', route: '', webLink:'' },
-  { id: '6', title: 'Quick Links', description: 'Important Shortcuts!👏', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!🤠', iconName: 'pencil-square-o', route: '', webLink:''},
+  { id: '1', title: 'Send Notification', description: 'Message volunteers with a push notification!', iconName: 'send-o', route: 'NotificationFormScreen' },
+  { id: '2', title: 'Check In', description: 'Sign in when you arrive!', iconName: 'flag', route: 'CheckInScreen' },
+  { id: '3', title: 'Upload Pictures', description: 'Send us camper pics!', iconName: 'camera-retro', route: 'QuickLinksScreen' },
+  { id: '4', title: 'Download Pictures', description: 'Download your photos!', iconName: 'file-picture-o', route: '', webLink:''},
+  { id: '5', title: 'Call When in Need', description: 'Emergencies!!', iconName: 'phone', route: '', webLink:'' },
+  { id: '6', title: 'Quick Links', description: 'Important Shortcuts!', iconName: 'link', route: 'VirtualAssistant'},
+  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!', iconName: 'pencil-square-o', route: '', webLink:''},
   { id: '8', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback'},
-  // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!🤔', iconName: 'book', route: 'Handbook'},  
+  // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!', iconName: 'book', route: 'Handbook'},  
 ];
 
 type RootStackParamList = {
@@ -39,6 +41,8 @@ type Props = {
   isVolunteer: boolean;
 }
 const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [launchTime, setLaunchTime] = useState(Date.now());
   const [currentDate, setCurrentDate] = useState('');
   const [gratitudeMessage, setGratitudeMessage] = useState("Thank you so much for your work today!!");
   let slicedOptions;
@@ -62,25 +66,35 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       console.log('Error fetching links:', error);
     }
   };
+  const getAndSetLinks = async () => {
+    const links = await fetchLinks();
+    if (links) {
+      options.find(option => option.title === 'Upload Pictures').webLink = links.photoULink;
+      options.find(option => option.title === 'Download Pictures').webLink = links.photoDLink;
+      options.find(option => option.title === 'Complete CAMP Survey').webLink = links.surveyLink;
+    }
+  };
+  const fetchGratitudeMessage = async () => {
+    try {
+      const querySnapshot = await firestore()
+        .collection('gratitudeMessage')
+        .get()
+
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        const gratitudeMessage = doc.data().body;
+        setGratitudeMessage(gratitudeMessage);
+      }
+    } catch (error) {
+      console.log('Error fetching gratitude message:', error);
+    }
+  };
+
   
 
   useEffect(() => {
-    const fetchGratitudeMessage = async () => {
-      try {
-        const querySnapshot = await firestore()
-          .collection('gratitudeMessage')
-          .get()
-  
-        if (!querySnapshot.empty) {
-          const doc = querySnapshot.docs[0];
-          const gratitudeMessage = doc.data().body;
-          setGratitudeMessage(gratitudeMessage);
-        }
-      } catch (error) {
-        console.log('Error fetching gratitude message:', error);
-      }
-    };
-  
+    const appStateSub = AppState.addEventListener('change', handleAppStateChange);
+    
     fetchGratitudeMessage();
     const date = new Date();
     const formattedDate = date.toLocaleDateString(undefined, {
@@ -89,16 +103,28 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       day: 'numeric',
     });
     setCurrentDate(formattedDate);
-    const getAndSetLinks = async () => {
-      const links = await fetchLinks();
-      if (links) {
-        options.find(option => option.title === 'Upload Pictures').webLink = links.photoULink;
-        options.find(option => option.title === 'Download Pictures').webLink = links.photoDLink;
-        options.find(option => option.title === 'Complete CAMP Survey').webLink = links.surveyLink;
-      }
-    };
     getAndSetLinks();
+    return () => {
+      appStateSub.remove();
+    };
   }, []);
+
+  const handleAppStateChange = (nextAppState) => {
+    const currentTime = Date.now();
+    const oneDay = 5000; // one day in milliseconds
+
+    if (appState.match(/active|inactive/) && nextAppState === 'background') {
+      if (currentTime - launchTime >= oneDay) {
+        console.log('App has been open for more than a day!');
+        // Refresh the data here or restart the app here
+        // After refresh or restart, update the launchTime
+        fetchGratitudeMessage();
+        getAndSetLinks();
+        setLaunchTime(currentTime);
+      }
+    }
+    setAppState(nextAppState);
+  };
   
 
   
@@ -230,7 +256,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#dcdcdc',
     marginVertical: 5,
-    overflow: 'hidden', // Needed to apply border radius to ListItem
+    overflow: 'hidden', 
+    
   },
   descriptionText: {
     color: 'gray',

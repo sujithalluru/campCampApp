@@ -6,6 +6,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import firestore, { firebase } from '@react-native-firebase/firestore';
+import { AppState } from 'react-native';  // <-- Import AppState here
+
 
 type Props = {
     isNotGeneral: boolean;
@@ -24,6 +26,50 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     const [loading, setLoading] = useState(false);
     const [events, setEvents] = useState<{ id: string, title: string, body: string, createdAt: Date }[]>([]);
     const [allLoaded, setAllLoaded] = useState(false);
+    const [appState, setAppState] = useState(AppState.currentState);
+    const [launchTime, setLaunchTime] = useState(Date.now());
+   
+    const fetchTime = async () => {
+      let storedTime;
+    
+      if(isNotGeneral) {
+        storedTime = await AsyncStorage.getItem("volTime");
+      } else {
+        storedTime = await AsyncStorage.getItem("installTime");
+      }
+    
+      console.log('Stored time:', storedTime); // Add this line
+
+
+      if (storedTime !== null) {
+        // Convert the stored time back into a number
+        setTime(Number(storedTime));
+      }
+    };
+    const handleAppStateChange = (nextAppState) => {
+      const currentTime = Date.now();
+      const oneDay = 5000; // one day in milliseconds
+    
+      if (appState.match(/active|inactive/) && nextAppState === 'background') {
+        if (currentTime - launchTime >= oneDay) {
+          console.log('App has been open for more than a day!');
+          setLoading(false);
+          setAllLoaded(false);
+          if (time !== null) {
+            loadEvents();
+          }
+          setLaunchTime(currentTime);
+        }
+      }
+      setAppState(nextAppState);
+    };
+    
+    useEffect(() => {
+      const appStateSub = AppState.addEventListener('change', handleAppStateChange);
+      return () => {
+        appStateSub.remove();
+      };
+    }, [])
 
     useEffect(() => {
       NetInfo.fetch().then(state => {
@@ -39,25 +85,10 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
       return () => {
         unsubscribe();
       };
+      
     }, [navigation]);
     useEffect(() => {
-      const fetchTime = async () => {
-        let storedTime;
       
-        if(isNotGeneral) {
-          storedTime = await AsyncStorage.getItem("volTime");
-        } else {
-          storedTime = await AsyncStorage.getItem("installTime");
-        }
-      
-        console.log('Stored time:', storedTime); // Add this line
-
-
-        if (storedTime !== null) {
-          // Convert the stored time back into a number
-          setTime(Number(storedTime));
-        }
-      };
     
       fetchTime();
     }, [isNotGeneral]);

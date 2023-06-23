@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AppState } from 'react-native';  // <-- Import AppState here
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from './LoginScreen1';
@@ -20,6 +21,7 @@ import firestore from "@react-native-firebase/firestore";
 import GoogleFeedback from './GoogleFeedback';
 import ContactAdminsScreen from './ContactAdmin';
 import WebViewScreen from './WebViewScreen';
+
 // ...
 // require('dotenv').config();
 
@@ -32,9 +34,13 @@ const App = () => {
   const [isLogIn, setLogIn] = useState(false);
   const [role, setRole] = useState("general");
   const [loading, setLoading] = useState(true);
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [launchTime, setLaunchTime] = useState(Date.now());
   const validateCode = functions().httpsCallable('validateCode');
 
   useEffect(() => {
+    const appStateSub = AppState.addEventListener('change', handleAppStateChange);
+
     const requestUserPermission = async () => {
       const authStatus = await messaging().requestPermission();
       const enabled =
@@ -55,6 +61,7 @@ const App = () => {
         title: remoteMessage.notification.title,
         body: remoteMessage.notification.body,
       });
+      
   });
 
   // When a message arrives while the app is in the background or quit
@@ -98,7 +105,26 @@ const App = () => {
       }
     }
     checkLogIn();
+    return () => {
+      appStateSub.remove();
+    };
   }, []);
+
+  const handleAppStateChange = (nextAppState) => {
+    const currentTime = Date.now();
+    const oneDay = 5000; // one day in milliseconds
+
+    if (appState.match(/active|inactive/) && nextAppState === 'background') {
+      if (currentTime - launchTime >= oneDay) {
+        console.log('App has been open for more than a day!');
+        // Refresh the data here or restart the app here
+        // After refresh or restart, update the launchTime
+        setLaunchTime(currentTime);
+      }
+    }
+    setAppState(nextAppState);
+  };
+
 
   return (
     <NavigationContainer>
