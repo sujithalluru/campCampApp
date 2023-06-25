@@ -12,7 +12,7 @@ let transporter = nodemailer.createTransport({
         user: 'sujith.alluru1108@gmail.com',
         clientId: '580880783847-57v1bstle9k77nbsacaouvg8ijqlm7tq.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04VjnmDILjO3bCgYIARAAGAQSNwF-L9Irq10dAp_eXqh9JLMYOXSi6j8cSsjf70wNPLabmaL3-W8JLBqvjeJ5v5NwSTOATxvYnJY',
+        refreshToken: '1//04EuXS5DPYEYdCgYIARAAGAQSNwF-L9IrAaP-bwlKMq8cqFbi4HswNT6azFOce1GiZnIg-OdoGpARr8DYfyemSy2DJA-Z-55lGWQ',
     },
 });
 
@@ -70,7 +70,7 @@ exports.sendCodes = functions.https.onCall(async (data, context) => {
   // Send email
   let info = await transporter.sendMail({
     from: '"Your App" <sujith.alluru1108@gmail.com>',
-    to: "sujith.alluru1108@gmail.com",
+    to: "campcampappdev@gmail.com",
     subject: "Weekly Codes",
     text: `Volunteer code: ${volunteerCode}\nAdmin code: ${adminCode}`,
     html: `<b>Volunteer code: ${volunteerCode}</b><br/><b>Admin code: ${adminCode}</b>`
