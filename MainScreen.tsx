@@ -10,6 +10,7 @@ import Settings from './Settings';
 import Feedback from './Feedback';
 import HomeScreen from './HomeScreen';
 import NotificationsScreen from './NotificationScreen';
+import { Dimensions } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +30,7 @@ type Props = {
   const SettingsScreen = () => {
     const navigation = useNavigation();
     const [isConnected, setIsConnected] = useState(false);
+
   
     useEffect(() => {
       // navigation.setOptions({
@@ -105,14 +107,16 @@ type Props = {
     );
   };
 
-const MainScreen = ({isAdmin, isVolunteer}: Props) => {  return (
+const MainScreen = ({isAdmin, isVolunteer}: Props) => {  
+  const screenHeight = Dimensions.get('window').height;
+  return (
     <Tab.Navigator
   screenOptions={({ route }) => ({
     tabBarIcon: ({ color, size }) => {
       let iconName = icons[route.name as keyof typeof icons];
       return <Icon name={iconName} size={24} color={color} />;
     },
-    tabBarStyle: { height: 80 },
+    tabBarStyle: { height: screenHeight*0.1},
     tabBarLabelStyle: { fontSize: 12 }, // Increase font size
     headerShown: false,
     tabBarActiveTintColor: '#003479', // previously: tabBarOptions.activeTintColor
