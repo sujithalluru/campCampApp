@@ -147,7 +147,7 @@ const App = () => {
             </View>
           ),
           headerStyle: {
-            backgroundColor: '#086c9c',
+            backgroundColor: '#003479',
             height: screenHeight * 0.14, // Adjust the height based on your needs
           },
         }}

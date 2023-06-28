@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: '600',
     marginBottom: 5,
-    color: "#005987",
+    color: "#003479",
   },
   articleContainer: {
     flexDirection: 'row',

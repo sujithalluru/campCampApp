@@ -54,8 +54,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     <PaperProvider
       theme={{
         colors: {
-          primary: '#086c9c',
-          secondary:  '#086d9b42'// Change the primary color to your desired base color
+          primary: '#003479',
         },
       }}
     >
@@ -67,7 +66,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           value={email}
           onChangeText={setEmail}
           mode = "outlined"
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           style={styles.input}
           
         />
@@ -76,11 +75,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           value={password}
           onChangeText={setPassword}
           secureTextEntry
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           mode = "outlined"
           style={styles.input}
         />
-        <Button onPress={onLogin} style={styles.button} mode="contained">
+        <Button onPress={onLogin} style={[styles.button, ]} labelStyle={styles.buttonText} mode="contained">
           Log In
         </Button>
         <Button onPress={onPasswordReset} style={styles.button} mode="text">
@@ -114,6 +113,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
   },
 });
 

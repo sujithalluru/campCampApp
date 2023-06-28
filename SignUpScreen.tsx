@@ -58,7 +58,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
     <PaperProvider
       theme={{
         colors: {
-          primary: '#086c9c', // Change the primary color to your desired base color
+          primary: '#003479', // Change the primary color to your desired base color
         },
       }}
     >
@@ -70,7 +70,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           value={firstName}
           onChangeText={setFirstName}
           mode = "outlined"
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           style={styles.input}
         />
         <TextInput
@@ -78,7 +78,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           value={lastName}
           onChangeText={setLastName}
           mode = "outlined"
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           style={styles.input}
         />
         <TextInput
@@ -86,7 +86,7 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           value={email}
           onChangeText={setEmail}
           mode = "outlined"
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           style={styles.input}
         />
         <TextInput
@@ -94,11 +94,11 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
           value={password}
           onChangeText={setPassword}
           mode = "outlined"
-          underlineColor='#086c9c'
+          underlineColor='#003479'
           secureTextEntry
           style={styles.input}
         />
-        <Button onPress={onSignUp} style={styles.button} mode="contained">
+        <Button onPress={onSignUp} style={styles.button} labelStyle={styles.buttonText} mode="contained">
           Sign Up
         </Button>
         <Button onPress={() => navigation.navigate('Login')} style={styles.button} mode="text">
@@ -128,6 +128,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
   },
 });
 

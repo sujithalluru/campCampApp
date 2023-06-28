@@ -115,7 +115,7 @@ const MainScreen = ({isAdmin, isVolunteer}: Props) => {  return (
     tabBarStyle: { height: 80 },
     tabBarLabelStyle: { fontSize: 12 }, // Increase font size
     headerShown: false,
-    tabBarActiveTintColor: '#086c9c', // previously: tabBarOptions.activeTintColor
+    tabBarActiveTintColor: '#003479', // previously: tabBarOptions.activeTintColor
     tabBarInactiveTintColor: '#666666', // previously: tabBarOptions.inactiveTintColor
   })}
 >

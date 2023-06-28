@@ -96,8 +96,7 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
     <PaperProvider
     theme={{
       colors: {
-        primary: '#086c9c',
-        secondary:  '#086d9b42'// Change the primary color to your desired base color
+        primary: '#003479',
       },
     }}
   >
@@ -114,13 +113,13 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
             <List.Item
               title="Admin"
               onPress={() => handleMenuSelect('admin')}
-              style={{backgroundColor: "#086d9b20"}}
+              style={{backgroundColor: "#6c9bd9"}}
             />
             <Divider />
             <List.Item
               title="Volunteer"
               onPress={() => handleMenuSelect('volunteer')}
-              style={{backgroundColor: "#086d9b20"}}
+              style={{backgroundColor: "#6c9bd9"}}
             />
           </View>
         )}
@@ -134,7 +133,7 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
           style={styles.input}
         />
 
-        <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+        <Button mode="contained" onPress={handleSubmit} style={styles.button} labelStyle={styles.buttonText}>
           Submit
         </Button>
       </View>
@@ -174,6 +173,10 @@ const styles = StyleSheet.create({
     //marginLeft: 50,
     marginBottom: 10,
     color: '#ffffff',
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 14,
     },
 });
 

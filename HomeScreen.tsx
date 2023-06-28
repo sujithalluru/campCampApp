@@ -12,11 +12,10 @@ const options = [
   { id: '1', title: 'Send Notification', description: 'Message volunteers with a push notification!', iconName: 'send-o', route: 'NotificationFormScreen' },
   { id: '2', title: 'Check In', description: 'Sign in when you arrive!', iconName: 'flag', route: 'CheckInScreen' },
   { id: '3', title: 'Upload Pictures', description: 'Send us camper pics!', iconName: 'camera-retro', route: 'QuickLinksScreen' },
-  { id: '4', title: 'Download Pictures', description: 'Download your photos!', iconName: 'file-picture-o', route: '', webLink:''},
-  { id: '5', title: 'Call When in Need', description: 'Emergencies!!', iconName: 'phone', route: '', webLink:'' },
+  { id: '4', title: 'Complete CAMP Survey', description: 'Tell us your experience!', iconName: 'pencil-square-o', route: '', webLink:''},
+  { id: '5', title: 'Call When in Need', description: 'When you need somebody!', iconName: 'phone', route: '', webLink:'' },
   { id: '6', title: 'Quick Links', description: 'Important Shortcuts!', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '7', title: 'Complete CAMP Survey', description: 'Tell us your experience!', iconName: 'pencil-square-o', route: '', webLink:''},
-  { id: '8', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback'},
+  { id: '7', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback'},
   // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!', iconName: 'book', route: 'Handbook'},  
 ];
 
@@ -70,7 +69,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
     const links = await fetchLinks();
     if (links) {
       options.find(option => option.title === 'Upload Pictures').webLink = links.photoULink;
-      options.find(option => option.title === 'Download Pictures').webLink = links.photoDLink;
+      // options.find(option => option.title === 'Download Pictures').webLink = links.photoDLink;
       options.find(option => option.title === 'Complete CAMP Survey').webLink = links.surveyLink;
     }
   };
@@ -210,7 +209,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
         <TouchableOpacity disabled = {(isAdmin || isVolunteer) && option.title === "Check In"} key={option.id} onPress={() => handleOptionPress(option)}>
           <View style={styles.box}>
             <ListItem>
-              <Icon name={option.iconName} size={20} color="#005987" />
+              <Icon name={option.iconName} size={20} color="#003479" />
               <ListItem.Content>
                 <ListItem.Title>{option.title}</ListItem.Title>
                 <ListItem.Subtitle style={styles.descriptionText}>{option.description}</ListItem.Subtitle>
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
     marginLeft: -110,
     marginBottom:10,
     marginTop: -13,
-    color: "#005987",
+    color: "#003479",
     fontWeight: "600",
     
   },
