@@ -520,11 +520,12 @@
 				DEVELOPMENT_TEAM = C3WVRM542Y;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = campCampApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Camp CAMP";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -548,11 +549,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = C3WVRM542Y;
 				INFOPLIST_FILE = campCampApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Camp CAMP";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
