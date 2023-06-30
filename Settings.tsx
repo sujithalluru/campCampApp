@@ -65,7 +65,7 @@ const Settings = ({ navigation }: SettingsScreenProps) => {
         <Text style={styles.logoutButtonText}>Log Out</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.logoutButton} onPress={handleDeletePress}>
-        <Icon name="delete" size={24} color="#fff" />
+        <Icon name="trash" size={24} color="#fff" />
         <Text style={styles.logoutButtonText}>Delete Account</Text>
       </TouchableOpacity>
     </View>
