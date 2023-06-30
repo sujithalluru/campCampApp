@@ -126,8 +126,7 @@ const NotificationFormScreen = () => {
     <PaperProvider
     theme={{
       colors: {
-        primary: '#086c9c',
-        secondary:  '#086d9b42'// Change the primary color to your desired base color
+        primary: '#003479',// Change the primary color to your desired base color
       },
     }}
   >
@@ -142,13 +141,13 @@ const NotificationFormScreen = () => {
             <List.Item
               title="General"
               onPress={() => handleMenuSelect('general')}
-              style={{backgroundColor: "#086d9b20"}}
+              style={{backgroundColor: "#6c9bd9"}}
             />
             <Divider />
             <List.Item
               title="Volunteers Only"
               onPress={() => handleMenuSelect('volunteer')}
-              style={{backgroundColor: "#086d9b20"}}
+              style={{backgroundColor: "#6c9bd9"}}
             />
           </View>
         )}
@@ -183,6 +182,7 @@ const NotificationFormScreen = () => {
         mode="contained" 
         onPress={handleSendNotification}
         style={styles.button}
+        labelStyle={styles.buttonText}
       >
         Send Notification
       </Button>
@@ -223,5 +223,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     margin: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
   },
 });

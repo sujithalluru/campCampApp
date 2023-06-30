@@ -55,6 +55,7 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
           console.log('App has been open for more than a day!');
           setLoading(false);
           setAllLoaded(false);
+          setEvents([]);  // <-- Clear the existing notifications
           if (time !== null) {
             loadEvents();
           }
@@ -63,6 +64,7 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
       }
       setAppState(nextAppState);
     };
+    
     
     useEffect(() => {
       const appStateSub = AppState.addEventListener('change', handleAppStateChange);

@@ -47,7 +47,10 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       // Go to the main screen after successful sign up.
       const currentTime = firestore.Timestamp.now().toDate();
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
-      navigation.navigate('Main');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }], 
+      });
     } catch (error) {
       Alert.alert('Error', error.message.includes("weak-password") ? "Your password is too weak, please include a Capital letter, special character, a number, and at least 8 characters" :
         error.message.includes("invalid-email") ? "Please provide a valid email" : error.message);

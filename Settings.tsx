@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,39 +22,70 @@ interface SettingsScreenProps {
 const Settings = ({ navigation }: SettingsScreenProps) => {
 
   const handleLogoutPress = async () => {
-    await AsyncStorage.setItem('isLoggedIn', '0');
-    await AsyncStorage.setItem('role', '');
-    await AsyncStorage.setItem('code', '');
-    await AsyncStorage.setItem("volTime", '');
-    await AsyncStorage.setItem("installTime", '');
-    messaging()
-    .unsubscribeFromTopic('volunteer')
-    messaging()
-    .unsubscribeFromTopic('all')
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],  // use the name of your home screen here
-    });
+    Alert.alert(
+      "Confirm Logout",
+      "This action is irreversible",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: "Log Out",
+        onPress: async () => {
+          await AsyncStorage.setItem('isLoggedIn', '0');
+          await AsyncStorage.setItem('role', '');
+          await AsyncStorage.setItem('code', '');
+          await AsyncStorage.setItem("volTime", '');
+          await AsyncStorage.setItem("installTime", '');
+          messaging()
+          .unsubscribeFromTopic('volunteer')
+          messaging()
+          .unsubscribeFromTopic('all')
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],  // use the name of your home screen here
+          });
+        }
+      }
+    ],
+    {cancelable: false}
+    )
     
     
   };
 
   const handleDeletePress = async () => {
-    await AsyncStorage.setItem('isLoggedIn', '0');
-    await AsyncStorage.setItem('role', '');
-    await AsyncStorage.setItem('code', '');
-    await AsyncStorage.setItem("volTime", '');
-    await AsyncStorage.setItem("installTime", '');
-    messaging()
-    .unsubscribeFromTopic('volunteer')
-    messaging()
-    .unsubscribeFromTopic('all')
-    await auth().currentUser?.delete();
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],  // use the name of your home screen here
-    });
-    
+    Alert.alert(
+      "Confirm Account Deletion",
+      "This action is irreversible",
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: "Delete",
+        onPress: async () => {
+          await AsyncStorage.setItem('isLoggedIn', '0');
+          await AsyncStorage.setItem('role', '');
+          await AsyncStorage.setItem('code', '');
+          await AsyncStorage.setItem("volTime", '');
+          await AsyncStorage.setItem("installTime", '');
+          messaging()
+          .unsubscribeFromTopic('volunteer')
+          messaging()
+          .unsubscribeFromTopic('all')
+          await auth().currentUser?.delete();
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],  // use the name of your home screen here
+          });
+        }
+      }
+    ],
+    {cancelable: false}
+    )
     
   };
 
@@ -66,7 +97,7 @@ const Settings = ({ navigation }: SettingsScreenProps) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.logoutButton} onPress={handleDeletePress}>
         <Icon name="trash" size={24} color="#fff" />
-        <Text style={styles.logoutButtonText}>Delete Account</Text>
+        <Text style={[styles.logoutButtonText]}>Delete Account</Text>
       </TouchableOpacity>
     </View>
   );
@@ -84,6 +115,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     flexDirection: 'row',
+    marginBottom: 15,
   },
   logoutButtonText: {
     color: '#fff',
