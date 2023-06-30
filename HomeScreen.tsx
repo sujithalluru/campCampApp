@@ -131,7 +131,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
   const navigation = useNavigation();
 
   const handleOptionPress = (option: { id: string; title: string; description: string; iconName: string; route?: string; webLink?: string;}) => {
-    if (option.webLink && (option.title === "Upload Pictures" || option.title === "Download Pictures" || option.title === "Complete CAMP Survey")) {
+    if (option.webLink && (option.title === "Download Pictures" || option.title === "Complete CAMP Survey")) {
       navigation.dispatch(
         CommonActions.navigate({
           name: "WebViewScreen",
