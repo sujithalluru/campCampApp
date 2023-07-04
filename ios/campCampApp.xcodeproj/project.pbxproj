@@ -521,6 +521,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = campCampApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Camp CAMP";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -550,6 +551,7 @@
 				DEVELOPMENT_TEAM = C3WVRM542Y;
 				INFOPLIST_FILE = campCampApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Camp CAMP";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

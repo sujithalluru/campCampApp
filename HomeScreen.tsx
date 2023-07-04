@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 35,
-    marginLeft: -110,
+    marginRight: 10,
+    marginLeft:-90,
     marginBottom:10,
     marginTop: -13,
     color: "#003479",
     fontWeight: "600",
-    
   },
   dateText: {
     fontSize: 16,
