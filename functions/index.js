@@ -12,7 +12,7 @@ let transporter = nodemailer.createTransport({
         user: 'sujith.alluru1108@gmail.com',
         clientId: '580880783847-57v1bstle9k77nbsacaouvg8ijqlm7tq.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04EuXS5DPYEYdCgYIARAAGAQSNwF-L9IrAaP-bwlKMq8cqFbi4HswNT6azFOce1GiZnIg-OdoGpARr8DYfyemSy2DJA-Z-55lGWQ',
+        refreshToken: '1//04l7QYk9nF28MCgYIARAAGAQSNwF-L9Ir5CyGy45fDb0agl-vsR9z-SZGGZ5XwK5eOiQlWlcKbSUCS89E4ihxJOuV3CuzIBDn7lw',
     },
 });
 
