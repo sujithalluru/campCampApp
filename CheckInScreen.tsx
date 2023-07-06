@@ -55,29 +55,29 @@ const CheckInScreen = () => {
       return;
     }
 
-    validateCode({ role: role, code: Number(code) })
+    validateCode({ role: role=="Staff & Volunteer"?"volunteer":role=="Admin"? "admin": "" , code: Number(code) })
       .then(async (result) => {
         // The code was valid
         // Proceed with registration...
         // Alert.alert('Code validated successfully.');
         const currentTime = firestore.Timestamp.now().toMillis();
 await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
-        if(role === "volunteer"){
+        if(role === "Staff & Volunteer"){
           messaging().subscribeToTopic("volunteer");
           const token = await messaging().getToken();
           firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
-          await AsyncStorage.setItem('role', role);
+          await AsyncStorage.setItem('role', 'volunteer');
           await AsyncStorage.setItem('code', code)
           navigation.reset({
             index: 0,
             routes: [{ name: 'MainVolunteer' }], 
           });
         }
-        if(role === "admin"){
+        if(role === "Admin"){
           messaging().subscribeToTopic("volunteer");
           const token = await messaging().getToken();
           firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
-          await AsyncStorage.setItem('role', role);
+          await AsyncStorage.setItem('role', 'admin');
           await AsyncStorage.setItem('code', code)
           navigation.reset({
             index: 0,
@@ -112,13 +112,13 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
           <View style={styles.menu}>
             <List.Item
               title="Admin"
-              onPress={() => handleMenuSelect('admin')}
+              onPress={() => handleMenuSelect('Admin')}
               style={{backgroundColor: "#6c9bd9"}}
             />
             <Divider />
             <List.Item
-              title="Volunteer"
-              onPress={() => handleMenuSelect('volunteer')}
+              title="Staff & Volunteer"
+              onPress={() => handleMenuSelect('Staff & Volunteer')}
               style={{backgroundColor: "#6c9bd9"}}
             />
           </View>

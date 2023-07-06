@@ -199,11 +199,11 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       <View style={styles.header}>
         
         <Text style={styles.dateText}>{currentDate}</Text>
-        <Text style={styles.headerText}>{isAdmin ? "Admin Dashboard" : isVolunteer ? "Volunteer Dashboard" : "Dashboard"}</Text>
+        <Text style={styles.headerText}>{isAdmin ? "Admin Dashboard" : isVolunteer ? "Staff & Volunteers" : "Dashboard"}</Text>
         
       </View>
       {isAdmin||isVolunteer ? 
-      <Text style = {styles.gratitude}>{gratitudeMessage + "👍"}</Text>
+      <Text style = {styles.gratitude}>{gratitudeMessage}</Text>
         : <></>}
       {slicedOptions.map((option) => (
         <TouchableOpacity disabled = {(isAdmin || isVolunteer) && option.title === "Check In"} key={option.id} onPress={() => handleOptionPress(option)}>
