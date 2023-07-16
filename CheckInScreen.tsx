@@ -61,11 +61,19 @@ const CheckInScreen = () => {
         // Proceed with registration...
         // Alert.alert('Code validated successfully.');
         const currentTime = firestore.Timestamp.now().toMillis();
-await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
+        await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
         if(role === "Staff & Volunteer"){
-          messaging().subscribeToTopic("volunteer");
+          if (Platform.OS === "ios") {
+            messaging().subscribeToTopic("volunteerios");
+          } else {
+            messaging().subscribeToTopic("volunteerandroid");
+          }
           const token = await messaging().getToken();
-          firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
+          if(Platform.OS == "android"){
+            firestore().collection('tokens').doc(token).set({ topic: 'volunteerandroid' });
+          } else {
+            firestore().collection('tokens').doc(token).set({ topic: 'volunteerios' });
+          }
           await AsyncStorage.setItem('role', 'volunteer');
           await AsyncStorage.setItem('code', code)
           navigation.reset({
@@ -74,9 +82,17 @@ await AsyncStorage.setItem("volTime", JSON.stringify(currentTime));
           });
         }
         if(role === "Admin"){
-          messaging().subscribeToTopic("volunteer");
+          if (Platform.OS == "ios") {
+            messaging().subscribeToTopic("volunteerios");
+          } else {
+            messaging().subscribeToTopic("volunteerandroid");
+          }
           const token = await messaging().getToken();
-          firestore().collection('tokens').doc(token).set({ topic: 'volunteer' });
+          if(Platform.OS == "android"){
+            firestore().collection('tokens').doc(token).set({ topic: 'volunteerandroid' });
+          } else {
+            firestore().collection('tokens').doc(token).set({ topic: 'volunteerios' });
+          }          
           await AsyncStorage.setItem('role', 'admin');
           await AsyncStorage.setItem('code', code)
           navigation.reset({
@@ -166,7 +182,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   titleX: {
-    fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
+    fontFamily: Platform.OS == 'ios' ? 'System' : 'Roboto',
     fontWeight: '700',
     fontSize: 40,
     // marginRight: -15,

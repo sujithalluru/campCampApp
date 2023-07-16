@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { NavigationProp, CommonActions } from '@react-navigation/native';
 import firestore from "@react-native-firebase/firestore";
-import { AppState } from 'react-native';  // <-- Import AppState here
+import { AppState, Platform } from 'react-native';  // <-- Import AppState here
 
 
 const options = [
@@ -15,7 +15,7 @@ const options = [
   { id: '4', title: 'Complete CAMP Survey', description: 'Tell us your experience!', iconName: 'pencil-square-o', route: '', webLink:''},
   { id: '5', title: 'Call When in Need', description: 'When you need somebody!', iconName: 'phone', route: '', webLink:'' },
   { id: '6', title: 'Quick Links', description: 'Important Shortcuts!', iconName: 'link', route: 'VirtualAssistant'},
-  { id: '7', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback'},
+  { id: '7', title: 'App Feedback', description: 'We value your opinion!', iconName: 'pencil', route: 'GoogleFeedback', webLink:'https://forms.gle/ggd3PjabQr9jQZ2y8'},
   // { id: '9', title: 'CAMP Handbook', description: 'Check if you have questions!', iconName: 'book', route: 'Handbook'},  
 ];
 
@@ -55,7 +55,6 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       const photoULinkSnapshot = await firestore().collection('PhotoUpload Link').doc('unique').get();
       const photoDLinkSnapshot = await firestore().collection('PhotoDownload Link').doc('unique').get();
       const surveyLinkSnapshot = await firestore().collection('CAMPSurvey Link').doc('unique').get();
-      
       const photoULink = photoULinkSnapshot.data()?.data[0];
       const photoDLink = photoDLinkSnapshot.data()?.data[0];
       const surveyLink = surveyLinkSnapshot.data()?.data[0];
@@ -138,7 +137,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
           params: { url: option.webLink },
         })
       );
-    } else if (option.webLink) {
+    } else if (option.webLink && option.title!="App Feedback") {
       Linking.openURL(option.webLink);
     } else if(option.title == "Quick Links"){
       navigation.dispatch(
@@ -151,6 +150,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       
     } 
     else if(option.title == "Check In"){
+      console.log(Platform.OS.toString());
       navigation.dispatch(
         CommonActions.navigate({
           name: "CheckInScreen",
@@ -170,7 +170,7 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
       );
       
     } 
-    else if(option.title == "App Feedback"){
+    else if(option.title == "App Feedback" && Platform.OS!="android"){
       navigation.dispatch(
         CommonActions.navigate({
           name: "GoogleFeedback",
@@ -178,6 +178,11 @@ const HomeScreen = ({isAdmin, isVolunteer}: Props) => {
         )
         
       );
+      
+    } 
+    else if(option.title == "App Feedback" && Platform.OS=="android"){
+      Linking.openURL(option.webLink);
+
       
     } 
     else if(option.title == "Call When in Need"){

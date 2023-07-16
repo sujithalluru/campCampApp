@@ -8,7 +8,7 @@ import MainAdminScreen from './MainAdminScreen';
 import { Image, View, StyleSheet, Platform, Text} from 'react-native';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
-import notifee from '@notifee/react-native';
+import notifee, { EventType, AndroidImportance } from '@notifee/react-native';
 import SignupScreen from './SignUpScreen';
 import QuickLinks from './QuickLinks';
 import SummerNewsletter from './SummerNewsletter';
@@ -22,6 +22,7 @@ import GoogleFeedback from './GoogleFeedback';
 import ContactAdminsScreen from './ContactAdmin';
 import WebViewScreen from './WebViewScreen';
 import { Dimensions } from 'react-native';
+import {PermissionsAndroid} from 'react-native';
 
 
 // ...
@@ -39,12 +40,13 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [appState, setAppState] = useState(AppState.currentState);
   const [launchTime, setLaunchTime] = useState(Date.now());
+  
   const validateCode = functions().httpsCallable('validateCode');
 
   useEffect(() => {
     const appStateSub = AppState.addEventListener('change', handleAppStateChange);
 
-    const requestUserPermission = async () => {
+    const requestIOSUserPermission = async () => {
       const authStatus = await messaging().requestPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -53,33 +55,57 @@ const App = () => {
       if (enabled) {
         console.log('Authorization status:', authStatus);
       }
+      console.log(Platform.OS)
     }
 
-    requestUserPermission();
+    const requestAndroidUserPermission = async () => {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    }
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-      
-      // Display notification with notifee
-      await notifee.displayNotification({
-        title: remoteMessage.notification.title,
-        body: remoteMessage.notification.body,
+      const channelId = await notifee.createChannel({
+        id: 'foregroundChannel',
+        name: 'Foreground Channel',
+        importance: AndroidImportance.HIGH,
       });
-      
-  });
 
-  // When a message arrives while the app is in the background or quit
-  messaging().setBackgroundMessageHandler(async remoteMessage => {
+      if(Platform.OS === 'ios') {
+        await notifee.displayNotification({
+          title: remoteMessage.notification.title,
+          body: remoteMessage.notification.body,
+        });
+      } else {
+        await notifee.displayNotification({
+          title: remoteMessage.data.title,  // assuming you've included 'title' in your data payload
+          body: remoteMessage.data.body,    // assuming you've included 'body' in your data payload
+          android: {
+            channelId,
+            importance: AndroidImportance.HIGH
+          },
+        });
+      }
+    });
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', JSON.stringify(remoteMessage));
-      
-      // Display notification with notifee
-      // await notifee.displayNotification({
-      //   title: remoteMessage.notification.title,
-      //   body: remoteMessage.notification.body,
-      //   android: {
-      //     channelId: 'your-channel-id', // make sure you create this channel in your app
-      //   },
-      // });
-  });
+      const channelId = await notifee.createChannel({
+        id: 'highPriorityChannel',
+        name: 'High Priority',
+        importance: AndroidImportance.HIGH,
+      });
+    
+      await notifee.displayNotification({
+        title: remoteMessage.data.title,  // assuming you've included 'title' in your data payload
+        body: remoteMessage.data.body,    // assuming you've included 'body' in your data payload
+        android: {
+          channelId,
+          importance: AndroidImportance.HIGH
+        },
+      });
+    });
+    
+  
+
     const checkLogIn = async () => {
       
       const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
@@ -142,7 +168,7 @@ const App = () => {
         screenOptions={{
           headerTitle: () => (
             <View style={{ alignItems: 'center'}}> 
-              <Image source={require('./assets/CampHead.png')} style={{ width: 300, height: 50, marginBottom: 15, marginLeft: 10 }} />
+              <Image source={require('./assets/CampHead.png')} style={{ width: 300, height: 50, marginBottom: 15, marginLeft: 10}} />
          
             </View>
           ),
@@ -237,7 +263,7 @@ const App = () => {
 };
 const styles = StyleSheet.create({
 title: {
-  fontFamily: Platform.OS === 'ios' ? 'System' : 'Roboto',
+  fontFamily: Platform.OS == 'ios' ? 'System' : 'Roboto',
   fontWeight: '700',
   fontSize: 40,
   // marginRight: -15,

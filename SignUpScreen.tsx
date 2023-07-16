@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Alert, Platform } from 'react-native';
 import { Button, TextInput, Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 type RootStackParamList = {
   Login: undefined;
@@ -47,6 +48,17 @@ const SignupScreen = ({ navigation }: SignupScreenProps) => {
       // Go to the main screen after successful sign up.
       const currentTime = firestore.Timestamp.now().toDate();
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
+      if (Platform.OS == "ios") {
+        messaging().subscribeToTopic("allios");
+      } else {
+        messaging().subscribeToTopic("allandroid");
+      }
+      const token = await messaging().getToken();
+      if(Platform.OS == "android"){
+        firestore().collection('tokens').doc(token).set({ topic: 'allandroid' });
+      } else {
+        firestore().collection('tokens').doc(token).set({ topic: 'allios' });
+      }
       navigation.reset({
         index: 0,
         routes: [{ name: 'Main' }], 

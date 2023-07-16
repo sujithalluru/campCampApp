@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Alert, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Alert, ScrollView, Platform } from 'react-native';
 import { Button, TextInput, Provider as PaperProvider } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import { NavigationProp } from '@react-navigation/native';
@@ -29,8 +29,19 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       // Go to the main screen after successful login.
       await AsyncStorage.setItem('isLoggedIn', '1');
       const currentTime = firestore.Timestamp.now().toMillis();
+      console.log(currentTime)
       await AsyncStorage.setItem("installTime", JSON.stringify(currentTime));
-      messaging().subscribeToTopic('all');
+      if (Platform.OS == "ios") {
+        messaging().subscribeToTopic("allios");
+      } else {
+        messaging().subscribeToTopic("allandroid");
+      }
+      const token = await messaging().getToken();
+      if(Platform.OS == "android"){
+        firestore().collection('tokens').doc(token).set({ topic: 'allandroid' });
+      } else {
+        firestore().collection('tokens').doc(token).set({ topic: 'allios' });
+      }
 
       navigation.reset({
         index: 0,

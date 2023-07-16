@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, Alert } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, Alert, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,9 +39,13 @@ const Settings = ({ navigation }: SettingsScreenProps) => {
           await AsyncStorage.setItem("volTime", '');
           await AsyncStorage.setItem("installTime", '');
           messaging()
-          .unsubscribeFromTopic('volunteer')
+          .unsubscribeFromTopic('volunteerios')
           messaging()
-          .unsubscribeFromTopic('all')
+          .unsubscribeFromTopic('volunteerandroid')
+          messaging()
+          .unsubscribeFromTopic('allios')
+          messaging()
+          .unsubscribeFromTopic('allandroid')
           navigation.reset({
             index: 0,
             routes: [{ name: 'Login' }],  // use the name of your home screen here
@@ -72,10 +76,17 @@ const Settings = ({ navigation }: SettingsScreenProps) => {
           await AsyncStorage.setItem('code', '');
           await AsyncStorage.setItem("volTime", '');
           await AsyncStorage.setItem("installTime", '');
+          if(Platform.OS == "android") {
           messaging()
-          .unsubscribeFromTopic('volunteer')
+          .unsubscribeFromTopic('volunteerandroid')
           messaging()
-          .unsubscribeFromTopic('all')
+          .unsubscribeFromTopic('allandroid')
+          } else {
+            messaging()
+            .unsubscribeFromTopic('volunteerios')
+            messaging()
+            .unsubscribeFromTopic('allios')
+          }
           await auth().currentUser?.delete();
           navigation.reset({
             index: 0,
