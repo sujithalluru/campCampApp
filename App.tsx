@@ -40,6 +40,8 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [appState, setAppState] = useState(AppState.currentState);
   const [launchTime, setLaunchTime] = useState(Date.now());
+  const [lastMessageTime, setLastMessageTime] = useState(Date.now());
+
   
   const validateCode = functions().httpsCallable('validateCode');
 
@@ -63,6 +65,7 @@ const App = () => {
     }
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      setLastMessageTime(Date.now());
       const channelId = await notifee.createChannel({
         id: 'foregroundChannel',
         name: 'Foreground Channel',
@@ -88,6 +91,7 @@ const App = () => {
 
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', JSON.stringify(remoteMessage));
+      setLastMessageTime(Date.now());
       const channelId = await notifee.createChannel({
         id: 'highPriorityChannel',
         name: 'High Priority',

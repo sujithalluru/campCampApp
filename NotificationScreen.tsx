@@ -1,17 +1,35 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState, useRef } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import CalendarEvent from "./ToDo";
-import Icon from "react-native-vector-icons/FontAwesome";
-import NetInfo from '@react-native-community/netinfo';
+import { useNetInfo } from "@react-native-community/netinfo";
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import firestore, { firebase } from '@react-native-firebase/firestore';
-import { AppState } from 'react-native';  // <-- Import AppState here
 
+type RootStackParamList = {
+  Home: undefined;
+  UploadPhotos: undefined;
+  SummerNewsletter: undefined;
+  CallWhenInNeed: undefined;
+  GoogleFeedback: undefined;
+  CompleteCAMPSurvey: undefined;
+  QuickLinks: undefined;
+  Handbook: undefined;
+  CheckInScreen: undefined;
+  NotificationFormScreen: undefined;
+  NotificationsScreen: undefined;
+  Details: { id: number };
+  ContactAdminsScreen: undefined;
+  MainVolunteer: undefined;
+  MainAdmin: undefined;
+  Main: undefined;
+};
 
 type Props = {
-    isNotGeneral: boolean;
+  navigation: NavigationProp<RootStackParamList, 'Home'>;
+  isNotGeneral: boolean;
 }
+
 interface CalendarEventItem {
   id: string;
   title: string;
@@ -20,186 +38,134 @@ interface CalendarEventItem {
 }
 
 const NotificationsScreen = ({ isNotGeneral }: Props) => {
-    const navigation = useNavigation();
-    const [isConnected, setIsConnected] = useState(false);
-    const [time, setTime] = useState();
-    const [loading, setLoading] = useState(false);
-    const [events, setEvents] = useState<{ id: string, title: string, body: string, createdAt: Date }[]>([]);
-    const [allLoaded, setAllLoaded] = useState(false);
-    const [appState, setAppState] = useState(AppState.currentState);
-    const [launchTime, setLaunchTime] = useState(Date.now());
-   
-    const fetchTime = async () => {
-      let storedTime;
-    
-      if(isNotGeneral) {
-        storedTime = await AsyncStorage.getItem("volTime");
-      } else {
-        storedTime = await AsyncStorage.getItem("installTime");
-      }
-    
-      console.log('Stored time:', storedTime); // Add this line
+  const navigation = useNavigation();
+  const netInfo = useNetInfo();
+  const [events, setEvents] = useState<CalendarEventItem[]>([]);
+  const [lastDoc, setLastDoc] = useState<FirebaseFirestoreTypes.QueryDocumentSnapshot | undefined>(undefined);
+  const [time, setTime] = useState<number>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [role, setRole] = useState("general");
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
 
-      if (storedTime !== null) {
-        // Convert the stored time back into a number
-        setTime(Number(storedTime));
-      }
-    };
-    const handleAppStateChange = (nextAppState) => {
-      const currentTime = Date.now();
-      const oneDay = 5000; // one day in milliseconds
-    
-      if (appState.match(/active|inactive/) && nextAppState === 'background') {
-        if (currentTime - launchTime >= oneDay) {
-          console.log('App has been open for more than a day!');
-          setLoading(false);
-          setAllLoaded(false);
-          setEvents([]);  // <-- Clear the existing notifications
-          if (time !== null) {
-            loadEvents();
-          }
-          setLaunchTime(currentTime);
-        }
-      }
-      setAppState(nextAppState);
-    };
-    
-    
-    useEffect(() => {
-      const appStateSub = AppState.addEventListener('change', handleAppStateChange);
-      return () => {
-        appStateSub.remove();
-      };
-    }, [])
+  const fetchTime = async () => {
+    let storedTime;
+    let r;
+    r = await AsyncStorage.getItem("role");
+    setRole(r);
+    if(isNotGeneral) {
+      storedTime = await AsyncStorage.getItem("volTime");
+    } else {
+      storedTime = await AsyncStorage.getItem("installTime");
+    }
 
-    useEffect(() => {
-      NetInfo.fetch().then(state => {
-        if (state.isConnected !== null) {
-          setIsConnected(state.isConnected);
-        }
-      });
-      const unsubscribe = NetInfo.addEventListener(state => {
-        if (state.isConnected !== null) {
-          setIsConnected(state.isConnected);
-        }
-      });
-      return () => {
-        unsubscribe();
-      };
-      
-    }, [navigation]);
-    useEffect(() => {
-      
-    
+    if (storedTime !== null) {
+      setTime(Number(storedTime));
+    }
+
+    await loadEvents();
+  };
+
+  useEffect(() => {
+    if(netInfo.isConnected && !events.length) {
       fetchTime();
-    }, [isNotGeneral]);
-    
-    useEffect(() => {
-      if(time !== null) {
-        loadEvents();
-      }
-    }, [isConnected, time]);
-    
-    const loadEvents = async () => {
-      if (loading || allLoaded) {
-        return;
-      }
-    
-      setLoading(true);
-      const eventRef = firestore().collection(isNotGeneral ? 'allNotifications' : "notifications");
-      let query = eventRef.orderBy('createdAt', 'desc').limit(20);
-    
-      try {
-        let snapshot;
-        if (time) {
-          snapshot = await query.get();
-          snapshot = snapshot.docs.filter(doc => {
-            const data = doc.data();
-            // Convert the createdAt Timestamp to milliseconds since the epoch
-            const createdAtMillis = data.createdAt.toMillis();
-            // Only include the document if createdAt is after time
-            return createdAtMillis > time;
-          });
-        } else {
-          snapshot = await query.get();
-        }
-    
-        const newEvents = snapshot.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            body: data.body,
-            createdAt: data.createdAt.toDate(),
-          };
-        });
-    
-        if (newEvents.length > 0) {
-          const lastDoc = snapshot[snapshot.length - 1];
-          const lastDocTime = lastDoc.data().createdAt.toMillis();
-          setTime(lastDocTime);
-          setEvents(prevEvents => [...prevEvents, ...newEvents]);
-        }
-    
-        // If the last fetched batch of notifications is smaller than the limit, set allLoaded to true
-        if (newEvents.length < 20) {
-          setAllLoaded(true);
-        }
-    
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-      }
-    };
-    
-    
-    
-    
-    
-    
-    const renderEvent = ({ item }: { item: CalendarEventItem }) => (
-      <CalendarEvent summary={item.title} description={item.body} id = {item.id} createdAt={item.createdAt} />
+    }
+  }, [netInfo.isConnected, events.length]);
+
+  const loadEvents = async () => {
+    if (!netInfo.isConnected) {
+      return;
+    }
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+
+
+    const eventRef = firestore().collection(isNotGeneral ? 'allNotifications' : "notifications");
+    let query = eventRef.orderBy('createdAt', 'desc').limit(20);
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+
+    if (!snapshot.empty) {
+      const newEvents = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.title,
+          body: data.body,
+          createdAt: data.createdAt.toDate(),
+        };
+      }).filter(newEvent => !events.some(event => event.id === newEvent.id));
+
+      setEvents(prevEvents => [...prevEvents, ...newEvents]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setIsLoading(false);
+      setIsRefreshing(false); // End the refreshing status after fetching data
+
+    }
+  };
+
+
+  const onRefresh = () => {
+    // Return if a refresh is already ongoing
+    if (isRefreshing) return;
+
+    setEvents([]); // Clear the events
+    setLastDoc(undefined); // Clear the last document
+    loadEvents(); // Reload the events
+  };
+
+  const renderEvent = ({ item }: { item: CalendarEventItem }) => (
+    <CalendarEvent summary={item.title} description={item.body} id={item.id} createdAt={item.createdAt} />
   );
 
-    return (
-        <>
-          {isConnected ? (
-            <FlatList
+  return (
+    <>
+      {isLoading ? (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      ) : netInfo.isConnected ? (
+        <View>
+          <Text style={styles.work}>Previous Notifications</Text>
+          <FlatList
             data={events}
             renderItem={renderEvent}
             keyExtractor={item => item.id}
             onEndReached={loadEvents}
             onEndReachedThreshold={0.5}
-            ListFooterComponent={loading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-            ListHeaderComponent={<Text style={styles.work}>Previous Notifications</Text>}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
           />
-          ) : (
-            <View>
-              <Icon name="wifi" size={32} color="#888" />
-              <Text>No Internet Connection</Text>
-            </View>
-          )}
-        </>
-      );
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Text>No Internet Connection</Text>
+        </View>
+      )}
+    </>
+  );
 };
 
 export default NotificationsScreen;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 0,
-      width: "100%",
-      height: "100%"
-    },
-    work:{
-      fontSize: 24,
-      alignSelf: "center",
-      marginVertical: 8,
-      marginBottom: 12,
-    },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    width: "100%",
+    height: "100%"
+  },
+  work:{
+    fontSize: 24,
+    alignSelf: "center",
+    marginVertical: 8,
+    marginBottom: 12,
+  },
 });

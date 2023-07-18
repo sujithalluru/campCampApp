@@ -42,6 +42,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       } else {
         firestore().collection('tokens').doc(token).set({ topic: 'allios' });
       }
+      await AsyncStorage.setItem('role', 'general');
+
 
       navigation.reset({
         index: 0,

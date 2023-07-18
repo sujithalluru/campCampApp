@@ -49,6 +49,20 @@ const NotificationFormScreen = () => {
                     body: body,
                     createdAt: firestore.Timestamp.now()
                   });
+                  await firestore()
+                  .collection('volnotifications')
+                  .add({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
+                await firestore()
+                  .collection('allNotifications')
+                  .add({
+                    title: title,
+                    body: body,
+                    createdAt: firestore.Timestamp.now()
+                  });
                 console.log('Notification sent successfully');
                 Alert.alert('Notification Sent', 'The notification was sent successfully.');
                 setTitle('');
