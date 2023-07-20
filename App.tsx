@@ -63,6 +63,11 @@ const App = () => {
     const requestAndroidUserPermission = async () => {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
     }
+    if(Platform.OS == "ios"){
+      requestIOSUserPermission();
+    } else {
+      requestAndroidUserPermission();
+    }
     messaging().onMessage(async remoteMessage => {
       console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
       setLastMessageTime(Date.now());

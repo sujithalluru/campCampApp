@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import CalendarEvent from "./ToDo";
@@ -42,7 +42,6 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
   const netInfo = useNetInfo();
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [lastDoc, setLastDoc] = useState<FirebaseFirestoreTypes.QueryDocumentSnapshot | undefined>(undefined);
-  const [time, setTime] = useState<number>();
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [role, setRole] = useState("general");
@@ -56,15 +55,16 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     setRole(r);
     if(isNotGeneral) {
       storedTime = await AsyncStorage.getItem("volTime");
+      console.log("vol stored:" + storedTime);
+
     } else {
       storedTime = await AsyncStorage.getItem("installTime");
+      console.log("gen stored:" + storedTime);
+
     }
 
-    if (storedTime !== null) {
-      setTime(Number(storedTime));
-    }
 
-    await loadEvents();
+    await loadEvents(Number(storedTime));
   };
 
   useEffect(() => {
@@ -73,51 +73,65 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
     }
   }, [netInfo.isConnected, events.length]);
 
-  const loadEvents = async () => {
-    if (!netInfo.isConnected) {
-      return;
-    }
-    if (isRefreshing) return;
-    setIsRefreshing(true);
-
-
-    const eventRef = firestore().collection(isNotGeneral ? 'allNotifications' : "notifications");
-    let query = eventRef.orderBy('createdAt', 'desc').limit(20);
-
-    if (lastDoc) {
-      query = query.startAfter(lastDoc);
-    }
-
-    const snapshot = await query.get();
-
-    if (!snapshot.empty) {
-      const newEvents = snapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          title: data.title,
-          body: data.body,
-          createdAt: data.createdAt.toDate(),
-        };
-      }).filter(newEvent => !events.some(event => event.id === newEvent.id));
-
-      setEvents(prevEvents => [...prevEvents, ...newEvents]);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-      setIsLoading(false);
-      setIsRefreshing(false); // End the refreshing status after fetching data
-
+  const loadEvents = async (time: number) => {
+    try {
+      if (!netInfo.isConnected || isRefreshing) {
+        return;
+      }
+      setIsRefreshing(true);
+  
+      const eventRef = firestore().collection(isNotGeneral ? 'allNotifications' : "notifications");
+      let query = eventRef.orderBy('createdAt', 'desc').limit(20);
+  
+      if (lastDoc) {
+        query = query.startAfter(lastDoc);
+      }
+  
+      const snapshot = await query.get();
+  
+      if (!snapshot.empty) {
+        const newEvents = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title,
+            body: data.body,
+            createdAt: data.createdAt.toDate(),
+          };
+        })
+        .filter(newEvent => newEvent.createdAt.getTime() > time)
+  
+        setEvents(prevEvents => [...prevEvents, ...newEvents]);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Failed to load events:", error);
+    } finally {
+      setIsRefreshing(false);
     }
   };
+  
+  
 
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     // Return if a refresh is already ongoing
     if (isRefreshing) return;
 
     setEvents([]); // Clear the events
     setLastDoc(undefined); // Clear the last document
-    loadEvents(); // Reload the events
-  };
+
+    // Fetch the stored time
+    let storedTime;
+    if(isNotGeneral) {
+      storedTime = await AsyncStorage.getItem("volTime");
+    } else {
+      storedTime = await AsyncStorage.getItem("installTime");
+    }
+
+    await loadEvents(Number(storedTime)); // Reload the events with the correct time parameter
+};
 
   const renderEvent = ({ item }: { item: CalendarEventItem }) => (
     <CalendarEvent summary={item.title} description={item.body} id={item.id} createdAt={item.createdAt} />
@@ -138,7 +152,7 @@ const NotificationsScreen = ({ isNotGeneral }: Props) => {
             keyExtractor={item => item.id}
             onEndReached={loadEvents}
             onEndReachedThreshold={0.5}
-            refreshing={refreshing}
+            refreshing={isRefreshing} // Changed from refreshing
             onRefresh={onRefresh}
           />
         </View>
