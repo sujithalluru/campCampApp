@@ -94,9 +94,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.campcampapp"
+    namespace "com.sujith.campcampapp"
     defaultConfig {
-        applicationId "com.campcampapp"
+        applicationId "com.sujith.campcampapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
