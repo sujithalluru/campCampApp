@@ -13,23 +13,6 @@ interface Admin {
 //   imageUrl: string;
 }
 
-// const admins: Admin[] = [
-//   {
-//     name: "John Doe",
-//     role: "AP Calculus BC",
-//     number: 5124968852,
-//     // email: "adith.chandraiah@gmail.com",
-//     // imageUrl: "https://images.squarespace-cdn.com/content/v1/5b56c01f9f877051fa238ca3/1573759915619-1LGAQ3NCIULHNEZ1OY87/Ray.jpg",
-//   },
-//   {
-//     name: "Jane Smith",
-//     role: "AP English Language and Composition",
-//     number: 5124968852,
-//     // email: "janesmith@example.com",
-//     // imageUrl: "https://media.istockphoto.com/id/1151796047/photo/laughing-mature-businesswoman-wearing-glasses-posing-on-grey-studio-background.jpg?s=612x612&w=0&k=20&c=Nkb3aDxmf2g_-zFqq0j97x8J_V9asEq5XUpPJU4wxLc=",
-//   },
-//   // Add more teachers here
-// ];
 
 const ItemView = ({ item }: { item: Admin }) => {
   const handleNumberPress = () => {
